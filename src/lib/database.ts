@@ -1,10 +1,32 @@
-/**
- * Dexie database configuration for GYMFLOW
- * Handles all IndexedDB operations with type safety
- */
-
 import Dexie, { type EntityTable } from "dexie";
-import type { UserProfile } from "@/types/user";
+export interface UserProfile {
+  id?: number;
+  name: string;
+  age: number;
+  heightCm: number;
+  heightFeet: number;
+  heightInches: number;
+  weight: number;
+  targetWeight: number; 
+  gender: "male" | "female" | "other" | "prefer-not-to-say";
+  activityLevel:
+    | "sedentary"
+    | "lightly-active"
+    | "moderately-active"
+    | "very-active"
+    | "extremely-active";
+  primaryGoal:
+    | "lose-weight"
+    | "gain-muscle"
+    | "get-stronger"
+    | "improve-endurance"
+    | "general-fitness"
+    | "sport-specific";
+  experienceLevel: "beginner" | "intermediate" | "advanced" | "expert";
+  preferredUnits: "metric" | "imperial";
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 // Workout-related types (we'll expand these later)
 export interface Exercise {
@@ -127,7 +149,7 @@ export class GymFlowDatabase extends Dexie {
   ): Promise<number> {
     // Single user system: replace any existing user profile
     await this.users.clear();
-    
+
     const id = await this.users.add(userData as UserProfile);
     if (typeof id === "undefined") {
       throw new Error("Failed to create user");

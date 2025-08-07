@@ -1,18 +1,19 @@
+import { useFormContext } from 'react-hook-form';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import type { UserProfileFormData } from '@/types/user';
 import { EXPERIENCE_LEVELS } from '@/types/user';
+import type { OnboardingFormData } from '@/validations/onboarding';
 
 interface ExperienceStepProps {
-  formData: Partial<UserProfileFormData>;
-  updateFormData: (updates: Partial<UserProfileFormData>) => void;
   onNext: () => void;
   onBack: () => void;
   isFirst: boolean;
   isLast: boolean;
 }
 
-export function ExperienceStep({ formData, updateFormData }: ExperienceStepProps) {
+export function ExperienceStep({}: ExperienceStepProps) {
+  const { watch, setValue, formState: { errors } } = useFormContext<OnboardingFormData>();
+  const watchedValues = watch();
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -29,19 +30,19 @@ export function ExperienceStep({ formData, updateFormData }: ExperienceStepProps
             <Card
               key={level.value}
               className={`p-6 cursor-pointer transition-all ${
-                formData.experienceLevel === level.value
+                watchedValues.experienceLevel === level.value
                   ? 'border-primary bg-primary/5'
                   : 'border-border hover:border-primary/50'
               }`}
-              onClick={() => updateFormData({ experienceLevel: level.value })}
+              onClick={() => setValue('experienceLevel', level.value)}
             >
               <div className="flex items-start space-x-4">
                 <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-                  formData.experienceLevel === level.value
+                  watchedValues.experienceLevel === level.value
                     ? 'border-primary bg-primary'
                     : 'border-muted'
                 }`}>
-                  {formData.experienceLevel === level.value && (
+                  {watchedValues.experienceLevel === level.value && (
                     <div className="w-2 h-2 bg-white rounded-full"></div>
                   )}
                 </div>
@@ -53,9 +54,10 @@ export function ExperienceStep({ formData, updateFormData }: ExperienceStepProps
             </Card>
           ))}
         </div>
+        {errors.experienceLevel && (
+          <p className="text-sm text-destructive">{errors.experienceLevel.message}</p>
+        )}
       </div>
-
-
     </div>
   );
 }

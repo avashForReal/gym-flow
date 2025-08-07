@@ -5,8 +5,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { UserProfile } from '@/types/user';
-import { db } from '@/lib/database';
+import { db, type UserProfile } from '@/lib/database';
 
 interface UserState {
   // State

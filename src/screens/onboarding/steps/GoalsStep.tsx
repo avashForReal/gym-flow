@@ -1,21 +1,22 @@
+import { useFormContext } from 'react-hook-form';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import type { UserProfileFormData } from '@/types/user';
 import { PRIMARY_GOALS, ACTIVITY_LEVELS } from '@/types/user';
+import type { OnboardingFormData } from '@/validations/onboarding';
 
 interface GoalsStepProps {
-  formData: Partial<UserProfileFormData>;
-  updateFormData: (updates: Partial<UserProfileFormData>) => void;
   onNext: () => void;
   onBack: () => void;
   isFirst: boolean;
   isLast: boolean;
 }
 
-export function GoalsStep({ formData, updateFormData }: GoalsStepProps) {
-  const isMetric = formData.preferredUnits === 'metric';
+export function GoalsStep({}: GoalsStepProps) {
+  const { register, watch, setValue, formState: { errors } } = useFormContext<OnboardingFormData>();
+  const watchedValues = watch();
+  const isMetric = watchedValues.preferredUnits === 'metric';
   // Target weight is now required for all goals
 
   return (
@@ -35,11 +36,11 @@ export function GoalsStep({ formData, updateFormData }: GoalsStepProps) {
             {PRIMARY_GOALS.map((goal) => (
               <Card
                 key={goal.value}
-                className={`p-4 cursor-pointer transition-all ${formData.primaryGoal === goal.value
+                className={`p-4 cursor-pointer transition-all ${watchedValues.primaryGoal === goal.value
                   ? 'border-primary bg-primary/5'
                   : 'border-border'
                   }`}
-                onClick={() => updateFormData({ primaryGoal: goal.value })}
+                onClick={() => setValue('primaryGoal', goal.value)}
               >
                 <div className="text-center space-y-2">
                   <div className="text-2xl">{goal.icon}</div>
@@ -48,6 +49,9 @@ export function GoalsStep({ formData, updateFormData }: GoalsStepProps) {
               </Card>
             ))}
           </div>
+          {errors.primaryGoal && (
+            <p className="text-sm text-destructive">{errors.primaryGoal.message}</p>
+          )}
         </div>
 
         {/* Target Weight (required) */}
@@ -59,18 +63,20 @@ export function GoalsStep({ formData, updateFormData }: GoalsStepProps) {
             id="targetWeight"
             type="number"
             placeholder={`e.g. ${isMetric ? '65' : '145'}`}
-            value={formData.targetWeight || ''}
-            onChange={(e) => updateFormData({ targetWeight: e.target.value })}
+            {...register('targetWeight')}
             className="form-input"
           />
+          {errors.targetWeight && (
+            <p className="text-sm text-destructive">{errors.targetWeight.message}</p>
+          )}
         </div>
 
         {/* Activity Level */}
         <div className="space-y-3">
           <Label className='font-semibold'>Current Activity Level</Label>
           <Select
-            value={formData.activityLevel || ''}
-            onValueChange={(value) => updateFormData({ activityLevel: value as any })}
+            value={watchedValues.activityLevel || ''}
+            onValueChange={(value) => setValue('activityLevel', value as any)}
           >
             <SelectTrigger className="form-input h-[52px]!">
               <SelectValue placeholder="Select your activity level" />
@@ -86,6 +92,9 @@ export function GoalsStep({ formData, updateFormData }: GoalsStepProps) {
               ))}
             </SelectContent>
           </Select>
+          {errors.activityLevel && (
+            <p className="text-sm text-destructive">{errors.activityLevel.message}</p>
+          )}
         </div>
       </div>
     </div>

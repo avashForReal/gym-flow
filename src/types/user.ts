@@ -1,23 +1,4 @@
-/**
- * User profile and onboarding types
- */
-
-export interface UserProfile {
-  id?: number;
-  name: string;
-  email?: string;
-  dateOfBirth?: Date;
-  height: number; // in cm
-  weight: number; // in kg
-  gender: 'male' | 'female' | 'other' | 'prefer-not-to-say';
-  activityLevel: 'sedentary' | 'lightly-active' | 'moderately-active' | 'very-active' | 'extremely-active';
-  primaryGoal: 'lose-weight' | 'gain-muscle' | 'get-stronger' | 'improve-endurance' | 'general-fitness' | 'sport-specific';
-  targetWeight?: number; // in kg
-  experienceLevel: 'beginner' | 'intermediate' | 'advanced' | 'expert';
-  preferredUnits: 'metric' | 'imperial';
-  createdAt: Date;
-  updatedAt: Date;
-}
+import type { UserProfile } from "@/lib/database";
 
 export interface OnboardingStep {
   id: string;

@@ -2,33 +2,33 @@
  * Review step for onboarding
  */
 
-import React from 'react';
+import { useFormContext } from 'react-hook-form';
 import { Card } from '@/components/ui/card';
-import type { UserProfileFormData } from '@/types/user';
 import { PRIMARY_GOALS, ACTIVITY_LEVELS, EXPERIENCE_LEVELS, GENDER_OPTIONS } from '@/types/user';
+import type { OnboardingFormData } from '@/validations/onboarding';
 
 interface ReviewStepProps {
-  formData: Partial<UserProfileFormData>;
-  updateFormData: (updates: Partial<UserProfileFormData>) => void;
   onNext: () => void;
   onBack: () => void;
   isFirst: boolean;
   isLast: boolean;
 }
 
-export function ReviewStep({ formData }: ReviewStepProps) {
+export function ReviewStep({}: ReviewStepProps) {
+  const { watch } = useFormContext<OnboardingFormData>();
+  const formData = watch();
   const isMetric = formData.preferredUnits === 'metric';
   
-  const getGoalLabel = (value?: string) => 
+  const getGoalLabel = (value: string | null) => 
     PRIMARY_GOALS.find(g => g.value === value)?.label || 'Not specified';
   
-  const getActivityLabel = (value?: string) => 
+  const getActivityLabel = (value: string | null) => 
     ACTIVITY_LEVELS.find(a => a.value === value)?.label || 'Not specified';
   
-  const getExperienceLabel = (value?: string) => 
+  const getExperienceLabel = (value: string | null) => 
     EXPERIENCE_LEVELS.find(e => e.value === value)?.label || 'Not specified';
   
-  const getGenderLabel = (value?: string) => 
+  const getGenderLabel = (value: string | null) => 
     GENDER_OPTIONS.find(g => g.value === value)?.label || 'Not specified';
 
   return (

@@ -1,21 +1,22 @@
+import { useFormContext } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card } from '@/components/ui/card';
-import type { UserProfileFormData } from '@/types/user';
 import { GENDER_OPTIONS } from '@/types/user';
+import type { PersonalInfoFormData } from '@/validations/onboarding';
 
 interface PersonalInfoStepProps {
-  formData: Partial<UserProfileFormData>;
-  updateFormData: (updates: Partial<UserProfileFormData>) => void;
   onNext: () => void;
   onBack: () => void;
   isFirst: boolean;
   isLast: boolean;
 }
 
-export function PersonalInfoStep({ formData, updateFormData }: PersonalInfoStepProps) {
-  const isMetric = formData.preferredUnits === 'metric';
+export function PersonalInfoStep({}: PersonalInfoStepProps) {
+  const { register, watch, setValue, formState: { errors } } = useFormContext<PersonalInfoFormData>();
+  const watchedValues = watch();
+  const isMetric = watchedValues.preferredUnits === 'metric';
 
   return (
     <div className="space-y-6">
@@ -32,10 +33,12 @@ export function PersonalInfoStep({ formData, updateFormData }: PersonalInfoStepP
           <Input
             id="name"
             placeholder="Enter your name"
-            value={formData.name || ''}
-            onChange={(e) => updateFormData({ name: e.target.value })}
+            {...register('name')}
             className="form-input"
           />
+          {errors.name && (
+            <p className="text-sm text-destructive">{errors.name.message}</p>
+          )}
         </div>
 
         {/* Units preference */}
@@ -46,7 +49,7 @@ export function PersonalInfoStep({ formData, updateFormData }: PersonalInfoStepP
               className={`p-4 cursor-pointer transition-all ${
                 isMetric ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
               }`}
-              onClick={() => updateFormData({ preferredUnits: 'metric' })}
+              onClick={() => setValue('preferredUnits', 'metric')}
             >
               <div className="text-center">
                 <div className="font-semibold">Metric</div>
@@ -57,7 +60,7 @@ export function PersonalInfoStep({ formData, updateFormData }: PersonalInfoStepP
               className={`p-4 cursor-pointer transition-all ${
                 !isMetric ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
               }`}
-              onClick={() => updateFormData({ preferredUnits: 'imperial' })}
+              onClick={() => setValue('preferredUnits', 'imperial')}
             >
               <div className="text-center">
                 <div className="font-semibold">Imperial</div>
@@ -75,14 +78,18 @@ export function PersonalInfoStep({ formData, updateFormData }: PersonalInfoStepP
               Height {isMetric ? '(cm)' : ''}
             </Label>
             {isMetric ? (
-              <Input
-                id="height"
-                type="number"
-                placeholder="175"
-                value={formData.heightCm || ''}
-                onChange={(e) => updateFormData({ heightCm: e.target.value })}
-                className="form-input"
-              />
+              <div>
+                <Input
+                  id="height"
+                  type="number"
+                  placeholder="175"
+                  {...register('heightCm')}
+                  className="form-input"
+                />
+                {errors.heightCm && (
+                  <p className="text-sm text-destructive mt-1">{errors.heightCm.message}</p>
+                )}
+              </div>
             ) : (
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
@@ -93,10 +100,12 @@ export function PersonalInfoStep({ formData, updateFormData }: PersonalInfoStepP
                     placeholder="5"
                     min="3"
                     max="8"
-                    value={formData.heightFeet || ''}
-                    onChange={(e) => updateFormData({ heightFeet: e.target.value })}
+                    {...register('heightFeet')}
                     className="form-input"
                   />
+                  {errors.heightFeet && (
+                    <p className="text-xs text-destructive mt-1">{errors.heightFeet.message}</p>
+                  )}
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="heightInches" className="text-sm text-muted-foreground">Inches</Label>
@@ -106,10 +115,12 @@ export function PersonalInfoStep({ formData, updateFormData }: PersonalInfoStepP
                     placeholder="10"
                     min="0"
                     max="11"
-                    value={formData.heightInches || ''}
-                    onChange={(e) => updateFormData({ heightInches: e.target.value })}
+                    {...register('heightInches')}
                     className="form-input"
                   />
+                  {errors.heightInches && (
+                    <p className="text-xs text-destructive mt-1">{errors.heightInches.message}</p>
+                  )}
                 </div>
               </div>
             )}
@@ -125,11 +136,13 @@ export function PersonalInfoStep({ formData, updateFormData }: PersonalInfoStepP
                 id="weight"
                 type="number"
                 placeholder={isMetric ? '70' : '155'}
-                value={formData.weight || ''}
-                onChange={(e) => updateFormData({ weight: e.target.value })}
+                {...register('weight')}
                 className="form-input"
               />
             </div>
+            {errors.weight && (
+              <p className="text-sm text-destructive">{errors.weight.message}</p>
+            )}
           </div>
         </div>
 
@@ -137,8 +150,8 @@ export function PersonalInfoStep({ formData, updateFormData }: PersonalInfoStepP
         <div className="space-y-2">
           <Label className='font-semibold'>Gender</Label>
           <Select 
-            value={formData.gender || ''} 
-            onValueChange={(value) => updateFormData({ gender: value as any })}
+            value={watchedValues.gender || ''} 
+            onValueChange={(value) => setValue('gender', value as any)}
           >
             <SelectTrigger className="form-input">
               <SelectValue placeholder="Select gender" />
@@ -151,6 +164,9 @@ export function PersonalInfoStep({ formData, updateFormData }: PersonalInfoStepP
               ))}
             </SelectContent>
           </Select>
+          {errors.gender && (
+            <p className="text-sm text-destructive">{errors.gender.message}</p>
+          )}
         </div>
       </div>
     </div>
