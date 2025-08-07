@@ -18,7 +18,7 @@ type OnboardingFlowProps = {
 }
 
 const STEPS = [
-  { id: 'welcome', title: 'Welcome', component: WelcomeStep },
+  { id: 'welcome', title: 'Welcome to GymFlow', component: WelcomeStep },
   { id: 'personal', title: 'Personal Info', component: PersonalInfoStep },
   { id: 'goals', title: 'Goals', component: GoalsStep },
   { id: 'experience', title: 'Experience', component: ExperienceStep },
@@ -37,7 +37,7 @@ export function OnboardingFlow({ isLoading = false }: OnboardingFlowProps) {
 
   const currentStepData = useMemo(() => STEPS[currentStep], [currentStep]);
   const StepComponent = useMemo(() => currentStepData.component, [currentStepData]);
-  const progress = useMemo(() => ((currentStep) / STEPS.length) * 100, [currentStep]);
+  const progress = useMemo(() => ((currentStep + 1) / STEPS.length) * 100, [currentStep]);
 
   const handleNext = useCallback(() => {
     if (currentStep < STEPS.length - 1) {
@@ -58,14 +58,45 @@ export function OnboardingFlow({ isLoading = false }: OnboardingFlowProps) {
   const handleComplete = async () => {
     try {
       setIsSubmitting(true);
+      
+      // Convert height to cm based on units
+      let heightInCm: number;
+      if (formData.preferredUnits === 'imperial') {
+        const feet = parseInt(formData.heightFeet || '0');
+        const inches = parseInt(formData.heightInches || '0');
+        // Convert feet and inches to cm (1 foot = 30.48 cm, 1 inch = 2.54 cm)
+        heightInCm = Math.round((feet * 30.48) + (inches * 2.54));
+      } else {
+        heightInCm = parseInt(formData.heightCm || '0');
+      }
+
+      // Convert weight to kg if imperial
+      let weightInKg: number;
+      if (formData.preferredUnits === 'imperial') {
+        // Convert pounds to kg (1 lb = 0.453592 kg)
+        weightInKg = Math.round(parseFloat(formData.weight || '0') * 0.453592 * 10) / 10; // Round to 1 decimal
+      } else {
+        weightInKg = parseFloat(formData.weight || '0');
+      }
+
+      // Convert target weight to kg if provided and imperial
+      let targetWeightInKg: number | undefined;
+      if (formData.targetWeight) {
+        if (formData.preferredUnits === 'imperial') {
+          targetWeightInKg = Math.round(parseFloat(formData.targetWeight) * 0.453592 * 10) / 10;
+        } else {
+          targetWeightInKg = parseFloat(formData.targetWeight);
+        }
+      }
+
       const userProfile = {
         name: formData.name || '',
-        height: parseInt(formData.height || '0'),
-        weight: parseFloat(formData.weight || '0'),
+        height: heightInCm,
+        weight: weightInKg,
         gender: formData.gender || 'prefer-not-to-say',
         activityLevel: formData.activityLevel || 'moderately-active',
         primaryGoal: formData.primaryGoal || 'general-fitness',
-        targetWeight: formData.targetWeight ? parseFloat(formData.targetWeight) : undefined,
+        targetWeight: targetWeightInKg,
         experienceLevel: formData.experienceLevel || 'beginner',
         preferredUnits: formData.preferredUnits || 'metric',
       };
@@ -82,9 +113,6 @@ export function OnboardingFlow({ isLoading = false }: OnboardingFlowProps) {
   return (
     <LoaderWrapper isLoading={isLoading}>
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        {/* Background gradient */}
-        <div className="fixed inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5 -z-10" />
-
         <div className="w-full max-w-2xl">
           {/* Progress header */}
           <div className="mb-8 text-center">
@@ -103,7 +131,7 @@ export function OnboardingFlow({ isLoading = false }: OnboardingFlowProps) {
             <div className="space-y-2">
               <div className="flex justify-between text-sm text-muted-foreground">
                 <span>Step {currentStep + 1} of {STEPS.length}</span>
-                <span>{Math.round(progress)}% Complete</span>
+                <span>{Math.round(progress)}% complete</span>
               </div>
               <Progress value={progress} className="h-2" />
             </div>

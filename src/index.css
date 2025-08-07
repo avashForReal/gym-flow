@@ -87,7 +87,7 @@
   --destructive: #B4121B; /* Bold red for warnings */
   
   /* Borders & inputs */
-  --border: #e0e0e0; /* Light gray border */
+  --border: #cccccc; /* Darker gray border - more visible */
   --input: #ffffff; /* White input background */
   --ring: #B4121B; /* Red focus ring */
   
@@ -105,7 +105,7 @@
   --sidebar-primary-foreground: #ffffff; /* White text */
   --sidebar-accent: #f1f1f1; /* Light gray accent */
   --sidebar-accent-foreground: #000000; /* Black text */
-  --sidebar-border: #e0e0e0; /* Light gray border */
+  --sidebar-border: #cccccc; /* Darker gray border - more visible */
   --sidebar-ring: #B4121B; /* Red ring */
 }
 
@@ -138,7 +138,7 @@
   --destructive: #B4121B; /* Bold red for warnings */
   
   /* Borders & inputs - Dark theme */
-  --border: #444444; /* Medium gray border */
+  --border: #555555; /* Lighter gray border - more visible */
   --input: #1a1a1a; /* Dark gray input background */
   --ring: #B4121B; /* Red focus ring */
   
@@ -156,7 +156,7 @@
   --sidebar-primary-foreground: #ffffff; /* White text */
   --sidebar-accent: #2a2a2a; /* Darker gray accent */
   --sidebar-accent-foreground: #ffffff; /* White text */
-  --sidebar-border: #444444; /* Medium gray border */
+  --sidebar-border: #555555; /* Lighter gray border - more visible */
   --sidebar-ring: #B4121B; /* Red ring */
 }
 
@@ -268,18 +268,40 @@
     background-clip: text;
   }
 
-  /* Form input styles */
+  /* Form input styles - Visible borders */
   .form-input {
+    border: 2px solid var(--border) !important;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
   
   .form-input:hover {
-    border-color: hsl(var(--primary) / 0.5);
+    border-color: #999999 !important; /* Darker on hover */
   }
   
   .form-input:focus {
-    border-color: hsl(var(--primary));
-    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
+    border-color: var(--primary) !important; /* Red focus */
+    box-shadow: 0 0 0 3px rgba(180, 18, 27, 0.1) !important;
+  }
+
+  /* Dark mode form input adjustments */
+  .dark .form-input:hover {
+    border-color: #777777 !important; /* Lighter gray on hover in dark mode */
+  }
+
+  /* Fix select item text visibility when highlighted */
+  [data-highlighted] .text-muted-foreground {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+  
+  .dark [data-highlighted] .text-muted-foreground {
+    color: rgba(0, 0, 0, 0.6) !important;
+  }
+
+  /* Fix activity level dropdown item height and alignment */
+  [data-radix-select-item] {
+    display: flex !important;
+    align-items: center !important;
+    min-height: 60px !important;
   }
   
   /* Modern button styles */

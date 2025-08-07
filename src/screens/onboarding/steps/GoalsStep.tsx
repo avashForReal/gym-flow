@@ -1,7 +1,3 @@
-/**
- * Goals step for onboarding
- */
-
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -20,7 +16,7 @@ interface GoalsStepProps {
 
 export function GoalsStep({ formData, updateFormData }: GoalsStepProps) {
   const isMetric = formData.preferredUnits === 'metric';
-  const showTargetWeight = formData.primaryGoal === 'lose-weight' || formData.primaryGoal === 'gain-muscle';
+  // Target weight is now required for all goals
 
   return (
     <div className="space-y-6">
@@ -34,16 +30,15 @@ export function GoalsStep({ formData, updateFormData }: GoalsStepProps) {
       <div className="space-y-6">
         {/* Primary Goal */}
         <div className="space-y-3">
-          <Label>Primary Goal</Label>
+          <Label className='font-semibold'>Primary Goal</Label>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {PRIMARY_GOALS.map((goal) => (
               <Card
                 key={goal.value}
-                className={`p-4 cursor-pointer transition-all   ${
-                  formData.primaryGoal === goal.value
-                    ? 'border-primary bg-primary/5 scale-105'
-                    : 'border-border hover:border-primary/50 hover:scale-102'
-                }`}
+                className={`p-4 cursor-pointer transition-all ${formData.primaryGoal === goal.value
+                  ? 'border-primary bg-primary/5'
+                  : 'border-border'
+                  }`}
                 onClick={() => updateFormData({ primaryGoal: goal.value })}
               >
                 <div className="text-center space-y-2">
@@ -55,39 +50,37 @@ export function GoalsStep({ formData, updateFormData }: GoalsStepProps) {
           </div>
         </div>
 
-        {/* Target Weight (conditional) */}
-        {showTargetWeight && (
-          <div className="space-y-2">
-            <Label htmlFor="targetWeight">
-              Target Weight ({isMetric ? 'kg' : 'lbs'}) - Optional
-            </Label>
-            <Input
-              id="targetWeight"
-              type="number"
-              placeholder={`e.g. ${isMetric ? '65' : '145'}`}
-              value={formData.targetWeight || ''}
-              onChange={(e) => updateFormData({ targetWeight: e.target.value })}
-              className="form-input"
-            />
-          </div>
-        )}
+        {/* Target Weight (required) */}
+        <div className="space-y-2">
+          <Label htmlFor="targetWeight" className='font-semibold'>
+            Target Weight ({isMetric ? 'kg' : 'lbs'})
+          </Label>
+          <Input
+            id="targetWeight"
+            type="number"
+            placeholder={`e.g. ${isMetric ? '65' : '145'}`}
+            value={formData.targetWeight || ''}
+            onChange={(e) => updateFormData({ targetWeight: e.target.value })}
+            className="form-input"
+          />
+        </div>
 
         {/* Activity Level */}
         <div className="space-y-3">
-          <Label>Current Activity Level</Label>
-          <Select 
-            value={formData.activityLevel || ''} 
+          <Label className='font-semibold'>Current Activity Level</Label>
+          <Select
+            value={formData.activityLevel || ''}
             onValueChange={(value) => updateFormData({ activityLevel: value as any })}
           >
-            <SelectTrigger className="form-input">
+            <SelectTrigger className="form-input h-[52px]!">
               <SelectValue placeholder="Select your activity level" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="max-h-[300px]">
               {ACTIVITY_LEVELS.map((level) => (
-                <SelectItem key={level.value} value={level.value}>
-                  <div>
-                    <div className="font-medium">{level.label}</div>
-                    <div className="text-xs text-muted-foreground">{level.description}</div>
+                <SelectItem key={level.value} value={level.value} className="py-4 h-[60px] flex items-center">
+                  <div className="space-y-1 w-full">
+                    <div className="font-medium text-sm">{level.label}</div>
+                    <div className="text-xs text-muted-foreground leading-tight">{level.description}</div>
                   </div>
                 </SelectItem>
               ))}

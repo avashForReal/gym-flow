@@ -1,8 +1,3 @@
-/**
- * Personal information step for onboarding
- */
-
-import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -27,14 +22,13 @@ export function PersonalInfoStep({ formData, updateFormData }: PersonalInfoStepP
       <div className="text-center">
         <div className="text-4xl mb-4">👤</div>
         <p className="text-muted-foreground">
-          Help us personalize your experience with some basic information
+          Help us personalize your experience with some basic information.
         </p>
       </div>
 
       <div className="space-y-4">
-        {/* Name */}
         <div className="space-y-2">
-          <Label htmlFor="name">What should we call you?</Label>
+          <Label htmlFor="name" className='font-semibold'>What should we call you?</Label>
           <Input
             id="name"
             placeholder="Enter your name"
@@ -46,7 +40,7 @@ export function PersonalInfoStep({ formData, updateFormData }: PersonalInfoStepP
 
         {/* Units preference */}
         <div className="space-y-2">
-          <Label>Preferred measurement system</Label>
+          <Label className='font-semibold'>Preferred measurement system?</Label>
           <div className="grid grid-cols-2 gap-2">
             <Card
               className={`p-4 cursor-pointer transition-all ${
@@ -75,37 +69,73 @@ export function PersonalInfoStep({ formData, updateFormData }: PersonalInfoStepP
 
         {/* Physical stats */}
         <div className="grid grid-cols-2 gap-4">
+          {/* Height Section */}
           <div className="space-y-2">
-            <Label htmlFor="height">
-              Height ({isMetric ? 'cm' : 'ft/in'})
+            <Label htmlFor="height" className='font-semibold'>
+              Height {isMetric ? '(cm)' : ''}
             </Label>
-            <Input
-              id="height"
-              type="number"
-              placeholder={isMetric ? '175' : '5\'10"'}
-              value={formData.height || ''}
-              onChange={(e) => updateFormData({ height: e.target.value })}
-              className="form-input"
-            />
+            {isMetric ? (
+              <Input
+                id="height"
+                type="number"
+                placeholder="175"
+                value={formData.heightCm || ''}
+                onChange={(e) => updateFormData({ heightCm: e.target.value })}
+                className="form-input"
+              />
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-1">
+                  <Label htmlFor="heightFeet" className="text-sm text-muted-foreground">Feet</Label>
+                  <Input
+                    id="heightFeet"
+                    type="number"
+                    placeholder="5"
+                    min="3"
+                    max="8"
+                    value={formData.heightFeet || ''}
+                    onChange={(e) => updateFormData({ heightFeet: e.target.value })}
+                    className="form-input"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="heightInches" className="text-sm text-muted-foreground">Inches</Label>
+                  <Input
+                    id="heightInches"
+                    type="number"
+                    placeholder="10"
+                    min="0"
+                    max="11"
+                    value={formData.heightInches || ''}
+                    onChange={(e) => updateFormData({ heightInches: e.target.value })}
+                    className="form-input"
+                  />
+                </div>
+              </div>
+            )}
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="weight">
+
+          {/* Weight Section */}
+          <div className="space-y-2 flex flex-col">
+            <Label htmlFor="weight" className='font-semibold'>
               Weight ({isMetric ? 'kg' : 'lbs'})
             </Label>
-            <Input
-              id="weight"
-              type="number"
-              placeholder={isMetric ? '70' : '155'}
-              value={formData.weight || ''}
-              onChange={(e) => updateFormData({ weight: e.target.value })}
-              className="form-input"
-            />
+            <div className="flex-1 flex items-end">
+              <Input
+                id="weight"
+                type="number"
+                placeholder={isMetric ? '70' : '155'}
+                value={formData.weight || ''}
+                onChange={(e) => updateFormData({ weight: e.target.value })}
+                className="form-input"
+              />
+            </div>
           </div>
         </div>
 
         {/* Gender */}
         <div className="space-y-2">
-          <Label>Gender (optional)</Label>
+          <Label className='font-semibold'>Gender</Label>
           <Select 
             value={formData.gender || ''} 
             onValueChange={(value) => updateFormData({ gender: value as any })}

@@ -53,7 +53,13 @@ export function ReviewStep({ formData }: ReviewStepProps) {
           <div className="flex justify-between items-center py-2 border-b border-border/30">
             <span className="text-muted-foreground">Height</span>
             <span className="font-medium">
-              {formData.height ? `${formData.height} ${isMetric ? 'cm' : 'ft/in'}` : 'Not specified'}
+              {isMetric 
+                ? (formData.heightCm ? `${formData.heightCm} cm` : 'Not specified')
+                : (formData.heightFeet && formData.heightInches 
+                    ? `${formData.heightFeet}'${formData.heightInches}"` 
+                    : 'Not specified'
+                  )
+              }
             </span>
           </div>
 

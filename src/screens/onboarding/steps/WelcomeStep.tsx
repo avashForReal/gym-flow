@@ -1,18 +1,7 @@
-/**
- * Welcome step for onboarding
- */
-
-import React from 'react';
 import { Button } from '@/components/ui/button';
-import type { UserProfileFormData } from '@/types/user';
 
 interface WelcomeStepProps {
-  formData: Partial<UserProfileFormData>;
-  updateFormData: (updates: Partial<UserProfileFormData>) => void;
   onNext: () => void;
-  onBack: () => void;
-  isFirst: boolean;
-  isLast: boolean;
 }
 
 export function WelcomeStep({ onNext }: WelcomeStepProps) {
@@ -20,28 +9,30 @@ export function WelcomeStep({ onNext }: WelcomeStepProps) {
     <div className="text-center space-y-6">
       <div className="space-y-4">
         <div className="text-6xl">🏋️‍♂️</div>
-        <h3 className="text-xl font-semibold">Welcome to GYMFLOW!</h3>
         <p className="text-muted-foreground max-w-md mx-auto leading-relaxed">
           Let's set up your profile so we can personalize your workout experience and track your progress effectively.
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto text-sm">
-        <div className="flex items-center space-x-2 text-muted-foreground">
-          <div className="w-2 h-2 bg-primary rounded-full"></div>
-          <span>Track workouts</span>
-        </div>
-        <div className="flex items-center space-x-2 text-muted-foreground">
-          <div className="w-2 h-2 bg-accent rounded-full"></div>
-          <span>Monitor progress</span>
-        </div>
-        <div className="flex items-center space-x-2 text-muted-foreground">
-          <div className="w-2 h-2 bg-primary rounded-full"></div>
-          <span>Set PRs</span>
-        </div>
-        <div className="flex items-center space-x-2 text-muted-foreground">
-          <div className="w-2 h-2 bg-accent rounded-full"></div>
-          <span>Stay motivated</span>
+
+      <div className="flex flex-col items-center justify-center">
+        <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto text-sm">
+          <div className="flex items-center space-x-2 text-muted-foreground">
+            <div className="w-2 h-2 bg-primary rounded-full"></div>
+            <span>Track workouts</span>
+          </div>
+          <div className="flex items-center space-x-2 text-muted-foreground">
+            <div className="w-2 h-2 bg-primary rounded-full"></div>
+            <span>Monitor progress</span>
+          </div>
+          <div className="flex items-center space-x-2 text-muted-foreground">
+            <div className="w-2 h-2 bg-primary rounded-full"></div>
+            <span>Set PRs</span>
+          </div>
+          <div className="flex items-center space-x-2 text-muted-foreground">
+            <div className="w-2 h-2 bg-primary rounded-full"></div>
+            <span>Stay motivated</span>
+          </div>
         </div>
       </div>
 

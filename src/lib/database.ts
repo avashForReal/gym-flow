@@ -229,5 +229,4 @@ export class GymFlowDatabase extends Dexie {
   }
 }
 
-// Export singleton instance
 export const db = new GymFlowDatabase();

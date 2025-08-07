@@ -42,7 +42,9 @@ export type Units = UserProfile['preferredUnits'];
 // Helper types for form validation
 export interface UserProfileFormData {
   name: string;
-  height: string;
+  heightCm: string;
+  heightFeet?: string;
+  heightInches?: string;
   weight: string;
   gender: Gender;
   activityLevel: ActivityLevel;
