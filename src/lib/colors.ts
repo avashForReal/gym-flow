@@ -92,26 +92,26 @@ export const workoutTypes = {
   strength: {
     label: 'Strength',
     color: gymColors.strength,
-    description: 'Raw power & heavy lifting',
+    description: 'Raw power & intensity',
     icon: '🔥',
   },
   cardio: {
     label: 'Cardio',
     color: gymColors.cardio,
-    description: 'Heart pumping endurance',
-    icon: '⚡',
+    description: 'Endurance & conditioning',
+    icon: '⚫',
   },
   flexibility: {
     label: 'Flexibility',
     color: gymColors.flexibility,
-    description: 'Mobility & recovery',
-    icon: '🌟',
+    description: 'Mobility & balance',
+    icon: '⚪',
   },
   rest: {
     label: 'Rest',
     color: gymColors.rest,
     description: 'Recovery & restoration',
-    icon: '🛌',
+    icon: '⚫',
   },
 } as const;
 

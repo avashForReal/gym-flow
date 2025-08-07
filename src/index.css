@@ -59,148 +59,148 @@
 :root {
   --radius: 0.625rem;
   
-  /* Light theme - Clean gym aesthetic */
-  --background: oklch(0.99 0.002 106.423); /* Crisp white */
-  --foreground: oklch(0.15 0.01 264.052); /* Deep charcoal */
-  --card: oklch(0.98 0.003 106.423);
-  --card-foreground: oklch(0.15 0.01 264.052);
-  --popover: oklch(0.98 0.003 106.423);
-  --popover-foreground: oklch(0.15 0.01 264.052);
+  /* Light theme - Simple & Clean */
+  --background: #ffffff; /* Clean white background */
+  --foreground: #000000; /* Pure black text */
+  --card: #f8f8f8; /* Light gray card background */
+  --card-foreground: #000000; /* Black card text */
+  --popover: #ffffff; /* White popover background */
+  --popover-foreground: #000000; /* Black popover text */
   
-  /* Primary - Bold electric orange */
-  --primary: oklch(0.68 0.25 35); /* Bright energetic orange */
-  --primary-foreground: oklch(0.98 0.003 106.423);
+  /* Primary - Bold Red */
+  --primary: #B4121B; /* Bold red - Strong & powerful */
+  --primary-foreground: #ffffff; /* White text on red */
   
-  /* Secondary - Clean neutral */
-  --secondary: oklch(0.94 0.008 264.052);
-  --secondary-foreground: oklch(0.2 0.015 264.052);
+  /* Secondary - Light Gray */
+  --secondary: #f1f1f1; /* Light gray secondary */
+  --secondary-foreground: #000000; /* Black text */
   
-  /* Muted - Subtle grays */
-  --muted: oklch(0.96 0.004 264.052);
-  --muted-foreground: oklch(0.5 0.012 264.052);
+  /* Muted - Subtle Grays */
+  --muted: #f5f5f5; /* Very light gray */
+  --muted-foreground: #666666; /* Medium gray text */
   
-  /* Accent - Vibrant cyan */
-  --accent: oklch(0.7 0.2 200); /* Electric cyan */
-  --accent-foreground: oklch(0.98 0.003 106.423);
+  /* Accent - Pure Black */
+  --accent: #000000; /* Black accent */
+  --accent-foreground: #ffffff; /* White text on black */
   
-  /* Destructive - Strong red (warnings & limits) */
-  --destructive: oklch(0.62 0.22 15.6);
+  /* Destructive - Same as primary red */
+  --destructive: #B4121B; /* Bold red for warnings */
   
   /* Borders & inputs */
-  --border: oklch(0.88 0.008 264.052);
-  --input: oklch(0.88 0.008 264.052);
-  --ring: oklch(0.68 0.25 35);
+  --border: #e0e0e0; /* Light gray border */
+  --input: #ffffff; /* White input background */
+  --ring: #B4121B; /* Red focus ring */
   
-  /* Charts - Workout type colors */
-  --chart-1: oklch(0.68 0.25 35); /* Strength - Bold orange */
-  --chart-2: oklch(0.65 0.22 140); /* Cardio - Vibrant green */
-  --chart-3: oklch(0.7 0.2 200); /* Progress - Electric cyan */
-  --chart-4: oklch(0.68 0.24 320); /* Recovery - Rich purple */
-  --chart-5: oklch(0.72 0.2 85); /* Endurance - Bright lime */
+  /* Charts - Simple Red & Black */
+  --chart-1: #B4121B; /* Bold red */
+  --chart-2: #000000; /* Pure black */
+  --chart-3: #666666; /* Medium gray */
+  --chart-4: #999999; /* Light gray */
+  --chart-5: #cccccc; /* Very light gray */
   
   /* Sidebar */
-  --sidebar: oklch(0.97 0.004 106.423);
-  --sidebar-foreground: oklch(0.15 0.01 264.052);
-  --sidebar-primary: oklch(0.68 0.25 35);
-  --sidebar-primary-foreground: oklch(0.98 0.003 106.423);
-  --sidebar-accent: oklch(0.92 0.01 240.5);
-  --sidebar-accent-foreground: oklch(0.25 0.02 240.5);
-  --sidebar-border: oklch(0.88 0.008 264.052);
-  --sidebar-ring: oklch(0.68 0.25 35);
+  --sidebar: #f8f8f8; /* Light gray sidebar */
+  --sidebar-foreground: #000000; /* Black text */
+  --sidebar-primary: #B4121B; /* Red primary */
+  --sidebar-primary-foreground: #ffffff; /* White text */
+  --sidebar-accent: #f1f1f1; /* Light gray accent */
+  --sidebar-accent-foreground: #000000; /* Black text */
+  --sidebar-border: #e0e0e0; /* Light gray border */
+  --sidebar-ring: #B4121B; /* Red ring */
 }
 
 .dark {
-  /* Dark theme - Optimized for gym environments */
-  --background: oklch(0.08 0.005 264.052); /* Deep black */
-  --foreground: oklch(0.95 0.005 106.423); /* Clean white */
-  --card: oklch(0.12 0.008 264.052);
-  --card-foreground: oklch(0.95 0.005 106.423);
-  --popover: oklch(0.12 0.008 264.052);
-  --popover-foreground: oklch(0.95 0.005 106.423);
+  /* Dark theme - Simple Red & Black */
+  --background: #000000; /* Pure black background */
+  --foreground: #ffffff; /* White text */
+  --card: #1a1a1a; /* Dark gray card background */
+  --card-foreground: #ffffff; /* White card text */
+  --popover: #1a1a1a; /* Dark gray popover background */
+  --popover-foreground: #ffffff; /* White popover text */
   
-  /* Primary - Blazing orange for dark mode */
-  --primary: oklch(0.75 0.28 35); /* Super bright orange */
-  --primary-foreground: oklch(0.08 0.005 264.052);
+  /* Primary - Bold Red (same as light) */
+  --primary: #B4121B; /* Bold red - Consistent across themes */
+  --primary-foreground: #ffffff; /* White text on red */
   
-  /* Secondary - Dark but visible */
-  --secondary: oklch(0.2 0.02 264.052);
-  --secondary-foreground: oklch(0.9 0.008 264.052);
+  /* Secondary - Dark Gray */
+  --secondary: #2a2a2a; /* Dark gray secondary */
+  --secondary-foreground: #ffffff; /* White text */
   
-  /* Muted - Balanced dark grays */
-  --muted: oklch(0.18 0.01 264.052);
-  --muted-foreground: oklch(0.7 0.015 264.052);
+  /* Muted - Medium Gray */
+  --muted: #333333; /* Medium gray */
+  --muted-foreground: #cccccc; /* Light gray text */
   
-  /* Accent - Neon cyan */
-  --accent: oklch(0.8 0.25 200); /* Bright neon cyan */
-  --accent-foreground: oklch(0.08 0.005 264.052);
+  /* Accent - White */
+  --accent: #ffffff; /* White accent for dark theme */
+  --accent-foreground: #000000; /* Black text on white */
   
-  /* Destructive - Bright red for visibility */
-  --destructive: oklch(0.7 0.25 15.6);
+  /* Destructive - Same red */
+  --destructive: #B4121B; /* Bold red for warnings */
   
-  /* Borders & inputs - Subtle but visible */
-  --border: oklch(0.2 0.01 264.052);
-  --input: oklch(0.16 0.01 264.052);
-  --ring: oklch(0.75 0.28 35);
+  /* Borders & inputs - Dark theme */
+  --border: #444444; /* Medium gray border */
+  --input: #1a1a1a; /* Dark gray input background */
+  --ring: #B4121B; /* Red focus ring */
   
-  /* Charts - Neon-bright for dark mode */
-  --chart-1: oklch(0.75 0.28 35); /* Strength - Blazing orange */
-  --chart-2: oklch(0.75 0.25 140); /* Cardio - Neon green */
-  --chart-3: oklch(0.8 0.25 200); /* Progress - Neon cyan */
-  --chart-4: oklch(0.75 0.28 320); /* Recovery - Vibrant purple */
-  --chart-5: oklch(0.78 0.25 85); /* Endurance - Electric lime */
+  /* Charts - Simple Red & Black (Dark Mode) */
+  --chart-1: #B4121B; /* Bold red */
+  --chart-2: #ffffff; /* White */
+  --chart-3: #cccccc; /* Light gray */
+  --chart-4: #666666; /* Medium gray */
+  --chart-5: #333333; /* Dark gray */
   
-  /* Sidebar - Dark with good contrast */
-  --sidebar: oklch(0.1 0.006 264.052);
-  --sidebar-foreground: oklch(0.95 0.005 106.423);
-  --sidebar-primary: oklch(0.75 0.28 35);
-  --sidebar-primary-foreground: oklch(0.08 0.005 264.052);
-  --sidebar-accent: oklch(0.18 0.015 240.5);
-  --sidebar-accent-foreground: oklch(0.85 0.01 240.5);
-  --sidebar-border: oklch(0.2 0.01 264.052);
-  --sidebar-ring: oklch(0.75 0.28 35);
+  /* Sidebar - Dark theme */
+  --sidebar: #1a1a1a; /* Dark gray sidebar */
+  --sidebar-foreground: #ffffff; /* White text */
+  --sidebar-primary: #B4121B; /* Red primary */
+  --sidebar-primary-foreground: #ffffff; /* White text */
+  --sidebar-accent: #2a2a2a; /* Darker gray accent */
+  --sidebar-accent-foreground: #ffffff; /* White text */
+  --sidebar-border: #444444; /* Medium gray border */
+  --sidebar-ring: #B4121B; /* Red ring */
 }
 
 /* Custom gym-specific color variables */
 :root {
-  /* Workout type semantic colors - BOLD & ENERGETIC */
-  --strength: oklch(0.68 0.25 35); /* Blazing orange - Raw power */
-  --cardio: oklch(0.65 0.22 140); /* Vibrant green - Energy & health */
-  --flexibility: oklch(0.68 0.24 320); /* Rich purple - Recovery & zen */
-  --rest: oklch(0.5 0.02 264.052); /* Calm gray - Rest days */
+  /* Workout type semantic colors - SIMPLE & POWERFUL */
+  --strength: #B4121B; /* Bold red - Raw power */
+  --cardio: #000000; /* Black - Endurance */
+  --flexibility: #666666; /* Gray - Balance */
+  --rest: #999999; /* Light gray - Recovery */
   
-  /* Progress indicators - HIGH CONTRAST */
-  --progress-excellent: oklch(0.7 0.25 140); /* Bright success green */
-  --progress-good: oklch(0.75 0.22 85); /* Electric lime */
-  --progress-average: oklch(0.72 0.25 50); /* Warm amber */
-  --progress-needs-work: oklch(0.68 0.28 15); /* Alert red */
+  /* Progress indicators - CLEAR PROGRESSION */
+  --progress-excellent: #B4121B; /* Red - Excellent progress */
+  --progress-good: #000000; /* Black - Good progress */
+  --progress-average: #666666; /* Gray - Average progress */
+  --progress-needs-work: #cccccc; /* Light gray - Needs work */
   
-  /* Weight plate colors - TRUE GYM COLORS */
-  --plate-red: oklch(0.65 0.28 15); /* Bold red - 25kg/55lb */
-  --plate-blue: oklch(0.6 0.25 240); /* Deep blue - 20kg/45lb */
-  --plate-yellow: oklch(0.8 0.2 85); /* Bright yellow - 15kg/35lb */
-  --plate-green: oklch(0.65 0.22 140); /* Forest green - 10kg/25lb */
-  --plate-white: oklch(0.95 0.005 0); /* Pure white - 2.5kg/5lb */
+  /* Weight plate colors - CLASSIC GYM PLATES */
+  --plate-red: #B4121B; /* Red - 25kg/55lb */
+  --plate-blue: #000000; /* Black - 20kg/45lb */
+  --plate-yellow: #666666; /* Gray - 15kg/35lb */
+  --plate-green: #999999; /* Light gray - 10kg/25lb */
+  --plate-white: #ffffff; /* White - 2.5kg/5lb */
 }
 
 .dark {
-  /* NEON gym colors for dark mode - MAXIMUM IMPACT */
-  --strength: oklch(0.75 0.28 35); /* BLAZING orange */
-  --cardio: oklch(0.75 0.25 140); /* NEON green */
-  --flexibility: oklch(0.75 0.28 320); /* ELECTRIC purple */
-  --rest: oklch(0.4 0.02 264.052); /* Subtle rest gray */
+  /* SIMPLE gym colors for dark mode - RED & BLACK */
+  --strength: #B4121B; /* Red - Visible power */
+  --cardio: #ffffff; /* White - Clear energy */
+  --flexibility: #cccccc; /* Light gray - Visible balance */
+  --rest: #666666; /* Medium gray - Visible rest */
   
-  /* Progress - GLOWING indicators */
-  --progress-excellent: oklch(0.8 0.28 140); /* GLOWING green */
-  --progress-good: oklch(0.82 0.25 85); /* BRIGHT lime */
-  --progress-average: oklch(0.78 0.28 50); /* VIBRANT amber */
-  --progress-needs-work: oklch(0.75 0.32 15); /* INTENSE red */
+  /* Progress - CLEAR indicators */
+  --progress-excellent: #B4121B; /* Red - Excellent */
+  --progress-good: #ffffff; /* White - Good */
+  --progress-average: #cccccc; /* Light gray - Average */
+  --progress-needs-work: #666666; /* Medium gray - Needs work */
   
-  /* Plate colors - NEON bright for dark gyms */
-  --plate-red: oklch(0.75 0.32 15); /* NEON red */
-  --plate-blue: oklch(0.7 0.28 240); /* ELECTRIC blue */
-  --plate-yellow: oklch(0.85 0.25 85); /* GLOWING yellow */
-  --plate-green: oklch(0.75 0.25 140); /* BRIGHT green */
-  --plate-white: oklch(0.95 0.008 0); /* PURE white */
+  /* Plate colors - VISIBLE for dark gyms */
+  --plate-red: #B4121B; /* Red */
+  --plate-blue: #ffffff; /* White */
+  --plate-yellow: #cccccc; /* Light gray */
+  --plate-green: #666666; /* Medium gray */
+  --plate-white: #ffffff; /* White */
 }
 
 @layer base {
@@ -267,20 +267,19 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-  
-  /* Modern card hover effects */
-  .modern-card {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform;
+
+  /* Form input styles */
+  .form-input {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
   
-  .modern-card:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.25);
+  .form-input:hover {
+    border-color: hsl(var(--primary) / 0.5);
   }
   
-  .dark .modern-card:hover {
-    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4);
+  .form-input:focus {
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
   }
   
   /* Modern button styles */
