@@ -1,0 +1,110 @@
+# Cursor Rules for Gym Logs
+
+## Project Intelligence
+
+### Memory Bank System
+This project uses a comprehensive Memory Bank system located in `memory-bank/`. ALWAYS read ALL memory bank files at the start of every task:
+- `projectbrief.md` - Core requirements and project scope
+- `productContext.md` - Why this exists and how it should work
+- `systemPatterns.md` - Architecture and design patterns
+- `techContext.md` - Technology stack and constraints
+- `activeContext.md` - Current work focus and decisions
+- `progress.md` - What works and what's left to build
+
+### Development Patterns
+
+#### Code Organization
+- Use TypeScript interfaces for all data models
+- Implement Repository pattern for IndexedDB data access
+- Configure PWA with manifest.json and service worker
+- Keep components focused and single-responsibility
+- Use React Context for global state, useState for local state
+
+#### Data Flow
+- Workout data flows: UI → Context → Repository → IndexedDB
+- Always validate data at boundaries
+- Implement optimistic updates for better UX
+- Auto-save workout progress to prevent data loss
+- Service worker handles offline sync and caching
+
+#### Mobile-First Approach
+- Design for thumb-friendly interaction during gym use
+- Prioritize speed and simplicity over feature richness
+- Large touch targets for weight/rep inputs
+- Minimize typing, maximize tapping/selecting
+
+### Technical Preferences
+
+#### State Management
+- Start with React Context + useReducer
+- Migrate to Zustand only if Context becomes insufficient
+- Keep workout session state separate from historical data
+
+#### Styling
+- Prefer component-scoped styling (CSS Modules or Styled Components)
+- Mobile-responsive design is mandatory
+- Dark mode support for gym environments
+
+#### Data Persistence
+- IndexedDB for all workout data storage (PWA requirement)
+- Always implement offline-first functionality with service worker
+- Graceful handling of storage quota exceeded
+- Background sync when connection restored
+
+### User Experience Priorities
+
+#### Workout Logging Flow
+1. Quick exercise selection (search + favorites)
+2. Previous set data visible while logging new sets
+3. One-tap weight/rep adjustments (+/- buttons)
+4. Auto-advance to next set after completion
+5. Visual progress indicators during workout
+
+#### Performance Requirements
+- Workout logging interactions must respond in <100ms
+- Initial app load should be <3 seconds
+- Smooth animations at 60fps
+- Works well on mid-range mobile devices
+
+### Development Workflow
+
+#### Feature Development
+- Always update Memory Bank when discovering new patterns
+- Implement features mobile-first, then enhance for desktop
+- Test on actual mobile devices, not just browser dev tools
+- Prioritize core workout logging over advanced analytics
+
+#### Code Quality
+- TypeScript strict mode is mandatory
+- All user inputs must be validated
+- Handle edge cases gracefully (empty data, corrupted storage)
+- Write self-documenting code with clear naming
+
+### Common Patterns
+
+#### Error Handling
+- Never lose user's workout data due to errors
+- Show user-friendly error messages
+- Implement recovery mechanisms for corrupted data
+- Log errors for debugging but don't expose technical details
+
+#### Data Validation
+- Validate numeric inputs (weights, reps, RPE)
+- Sanitize text inputs (exercise names, notes)
+- Handle edge cases (0 weight, negative reps, etc.)
+- Provide helpful validation messages
+
+### Project Evolution Notes
+- Started as standard React+Vite template
+- Focus on MVP: workout logging + basic progress tracking
+- Avoid feature creep - keep it simple and fast
+- User feedback will drive feature prioritization post-MVP
+
+### Key Insights
+- Gym users need speed and simplicity above all else
+- PWA with offline functionality is critical (poor gym wifi)
+- IndexedDB provides better performance than localStorage for workout data
+- Mobile UX is more important than desktop
+- App should be installable for native-like experience
+- Data loss is the worst possible user experience
+- Progressive overload tracking is the core value proposition

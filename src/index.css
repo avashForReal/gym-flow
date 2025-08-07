@@ -1,0 +1,312 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  
+  /* Gym-specific colors for Tailwind */
+  --color-strength: var(--strength);
+  --color-cardio: var(--cardio);
+  --color-flexibility: var(--flexibility);
+  --color-rest: var(--rest);
+  --color-progress-excellent: var(--progress-excellent);
+  --color-progress-good: var(--progress-good);
+  --color-progress-average: var(--progress-average);
+  --color-progress-needs-work: var(--progress-needs-work);
+  --color-plate-red: var(--plate-red);
+  --color-plate-blue: var(--plate-blue);
+  --color-plate-yellow: var(--plate-yellow);
+  --color-plate-green: var(--plate-green);
+  --color-plate-white: var(--plate-white);
+}
+
+:root {
+  --radius: 0.625rem;
+  
+  /* Light theme - Clean gym aesthetic */
+  --background: oklch(0.99 0.002 106.423); /* Crisp white */
+  --foreground: oklch(0.15 0.01 264.052); /* Deep charcoal */
+  --card: oklch(0.98 0.003 106.423);
+  --card-foreground: oklch(0.15 0.01 264.052);
+  --popover: oklch(0.98 0.003 106.423);
+  --popover-foreground: oklch(0.15 0.01 264.052);
+  
+  /* Primary - Bold electric orange */
+  --primary: oklch(0.68 0.25 35); /* Bright energetic orange */
+  --primary-foreground: oklch(0.98 0.003 106.423);
+  
+  /* Secondary - Clean neutral */
+  --secondary: oklch(0.94 0.008 264.052);
+  --secondary-foreground: oklch(0.2 0.015 264.052);
+  
+  /* Muted - Subtle grays */
+  --muted: oklch(0.96 0.004 264.052);
+  --muted-foreground: oklch(0.5 0.012 264.052);
+  
+  /* Accent - Vibrant cyan */
+  --accent: oklch(0.7 0.2 200); /* Electric cyan */
+  --accent-foreground: oklch(0.98 0.003 106.423);
+  
+  /* Destructive - Strong red (warnings & limits) */
+  --destructive: oklch(0.62 0.22 15.6);
+  
+  /* Borders & inputs */
+  --border: oklch(0.88 0.008 264.052);
+  --input: oklch(0.88 0.008 264.052);
+  --ring: oklch(0.68 0.25 35);
+  
+  /* Charts - Workout type colors */
+  --chart-1: oklch(0.68 0.25 35); /* Strength - Bold orange */
+  --chart-2: oklch(0.65 0.22 140); /* Cardio - Vibrant green */
+  --chart-3: oklch(0.7 0.2 200); /* Progress - Electric cyan */
+  --chart-4: oklch(0.68 0.24 320); /* Recovery - Rich purple */
+  --chart-5: oklch(0.72 0.2 85); /* Endurance - Bright lime */
+  
+  /* Sidebar */
+  --sidebar: oklch(0.97 0.004 106.423);
+  --sidebar-foreground: oklch(0.15 0.01 264.052);
+  --sidebar-primary: oklch(0.68 0.25 35);
+  --sidebar-primary-foreground: oklch(0.98 0.003 106.423);
+  --sidebar-accent: oklch(0.92 0.01 240.5);
+  --sidebar-accent-foreground: oklch(0.25 0.02 240.5);
+  --sidebar-border: oklch(0.88 0.008 264.052);
+  --sidebar-ring: oklch(0.68 0.25 35);
+}
+
+.dark {
+  /* Dark theme - Optimized for gym environments */
+  --background: oklch(0.08 0.005 264.052); /* Deep black */
+  --foreground: oklch(0.95 0.005 106.423); /* Clean white */
+  --card: oklch(0.12 0.008 264.052);
+  --card-foreground: oklch(0.95 0.005 106.423);
+  --popover: oklch(0.12 0.008 264.052);
+  --popover-foreground: oklch(0.95 0.005 106.423);
+  
+  /* Primary - Blazing orange for dark mode */
+  --primary: oklch(0.75 0.28 35); /* Super bright orange */
+  --primary-foreground: oklch(0.08 0.005 264.052);
+  
+  /* Secondary - Dark but visible */
+  --secondary: oklch(0.2 0.02 264.052);
+  --secondary-foreground: oklch(0.9 0.008 264.052);
+  
+  /* Muted - Balanced dark grays */
+  --muted: oklch(0.18 0.01 264.052);
+  --muted-foreground: oklch(0.7 0.015 264.052);
+  
+  /* Accent - Neon cyan */
+  --accent: oklch(0.8 0.25 200); /* Bright neon cyan */
+  --accent-foreground: oklch(0.08 0.005 264.052);
+  
+  /* Destructive - Bright red for visibility */
+  --destructive: oklch(0.7 0.25 15.6);
+  
+  /* Borders & inputs - Subtle but visible */
+  --border: oklch(0.2 0.01 264.052);
+  --input: oklch(0.16 0.01 264.052);
+  --ring: oklch(0.75 0.28 35);
+  
+  /* Charts - Neon-bright for dark mode */
+  --chart-1: oklch(0.75 0.28 35); /* Strength - Blazing orange */
+  --chart-2: oklch(0.75 0.25 140); /* Cardio - Neon green */
+  --chart-3: oklch(0.8 0.25 200); /* Progress - Neon cyan */
+  --chart-4: oklch(0.75 0.28 320); /* Recovery - Vibrant purple */
+  --chart-5: oklch(0.78 0.25 85); /* Endurance - Electric lime */
+  
+  /* Sidebar - Dark with good contrast */
+  --sidebar: oklch(0.1 0.006 264.052);
+  --sidebar-foreground: oklch(0.95 0.005 106.423);
+  --sidebar-primary: oklch(0.75 0.28 35);
+  --sidebar-primary-foreground: oklch(0.08 0.005 264.052);
+  --sidebar-accent: oklch(0.18 0.015 240.5);
+  --sidebar-accent-foreground: oklch(0.85 0.01 240.5);
+  --sidebar-border: oklch(0.2 0.01 264.052);
+  --sidebar-ring: oklch(0.75 0.28 35);
+}
+
+/* Custom gym-specific color variables */
+:root {
+  /* Workout type semantic colors - BOLD & ENERGETIC */
+  --strength: oklch(0.68 0.25 35); /* Blazing orange - Raw power */
+  --cardio: oklch(0.65 0.22 140); /* Vibrant green - Energy & health */
+  --flexibility: oklch(0.68 0.24 320); /* Rich purple - Recovery & zen */
+  --rest: oklch(0.5 0.02 264.052); /* Calm gray - Rest days */
+  
+  /* Progress indicators - HIGH CONTRAST */
+  --progress-excellent: oklch(0.7 0.25 140); /* Bright success green */
+  --progress-good: oklch(0.75 0.22 85); /* Electric lime */
+  --progress-average: oklch(0.72 0.25 50); /* Warm amber */
+  --progress-needs-work: oklch(0.68 0.28 15); /* Alert red */
+  
+  /* Weight plate colors - TRUE GYM COLORS */
+  --plate-red: oklch(0.65 0.28 15); /* Bold red - 25kg/55lb */
+  --plate-blue: oklch(0.6 0.25 240); /* Deep blue - 20kg/45lb */
+  --plate-yellow: oklch(0.8 0.2 85); /* Bright yellow - 15kg/35lb */
+  --plate-green: oklch(0.65 0.22 140); /* Forest green - 10kg/25lb */
+  --plate-white: oklch(0.95 0.005 0); /* Pure white - 2.5kg/5lb */
+}
+
+.dark {
+  /* NEON gym colors for dark mode - MAXIMUM IMPACT */
+  --strength: oklch(0.75 0.28 35); /* BLAZING orange */
+  --cardio: oklch(0.75 0.25 140); /* NEON green */
+  --flexibility: oklch(0.75 0.28 320); /* ELECTRIC purple */
+  --rest: oklch(0.4 0.02 264.052); /* Subtle rest gray */
+  
+  /* Progress - GLOWING indicators */
+  --progress-excellent: oklch(0.8 0.28 140); /* GLOWING green */
+  --progress-good: oklch(0.82 0.25 85); /* BRIGHT lime */
+  --progress-average: oklch(0.78 0.28 50); /* VIBRANT amber */
+  --progress-needs-work: oklch(0.75 0.32 15); /* INTENSE red */
+  
+  /* Plate colors - NEON bright for dark gyms */
+  --plate-red: oklch(0.75 0.32 15); /* NEON red */
+  --plate-blue: oklch(0.7 0.28 240); /* ELECTRIC blue */
+  --plate-yellow: oklch(0.85 0.25 85); /* GLOWING yellow */
+  --plate-green: oklch(0.75 0.25 140); /* BRIGHT green */
+  --plate-white: oklch(0.95 0.008 0); /* PURE white */
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  
+  html {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    /* Modern font rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    /* Prevent zoom on mobile inputs */
+    touch-action: manipulation;
+    /* Modern backdrop blur support */
+    backdrop-filter: blur(0);
+  }
+  
+  /* Modern focus states */
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    @apply ring-2 ring-primary ring-offset-2 ring-offset-background;
+    outline: none;
+  }
+  
+  /* Modern number display */
+  .workout-number {
+    font-family: 'JetBrains Mono', 'SF Mono', Monaco, 'Cascadia Code', monospace;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.025em;
+  }
+  
+  /* Modern tap targets */
+  .tap-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Modern glassmorphism effects */
+  .glass {
+    backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.125);
+  }
+  
+  .dark .glass {
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  
+  /* Modern gradient text */
+  .gradient-text {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Modern card hover effects */
+  .modern-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+  }
+  
+  .modern-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.25);
+  }
+  
+  .dark .modern-card:hover {
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4);
+  }
+  
+  /* Modern button styles */
+  .modern-btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+  
+  .modern-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s;
+  }
+  
+  .modern-btn:hover::before {
+    left: 100%;
+  }
+  
+  .modern-btn:active {
+    transform: scale(0.98);
+  }
+}
