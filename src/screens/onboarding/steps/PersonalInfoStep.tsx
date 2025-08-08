@@ -14,7 +14,7 @@ interface PersonalInfoStepProps {
   isLast: boolean;
 }
 
-export function PersonalInfoStep({}: PersonalInfoStepProps) {
+export function PersonalInfoStep({ }: PersonalInfoStepProps) {
   const { register, watch, setValue, formState: { errors }, clearErrors, trigger } = useFormContext<PersonalInfoFormData>();
   const watchedValues = watch();
   const isMetric = useMemo(() => watchedValues.preferredUnits === 'metric', [watchedValues.preferredUnits]);
@@ -26,10 +26,14 @@ export function PersonalInfoStep({}: PersonalInfoStepProps) {
     if (units === 'metric') {
       setValue('heightFeet', null, { shouldValidate: false });
       setValue('heightInches', null, { shouldValidate: false });
-      trigger(['heightCm', 'weight']);
+      trigger(['heightCm', 'weight'], {
+        shouldFocus: true,
+      });
     } else {
       setValue('heightCm', '', { shouldValidate: false });
-      trigger(['heightFeet', 'heightInches', 'weight']);
+      trigger(['heightFeet', 'heightInches', 'weight'], {
+        shouldFocus: true,
+      });
     }
   }, [setValue, clearErrors]);
 
@@ -61,9 +65,8 @@ export function PersonalInfoStep({}: PersonalInfoStepProps) {
           <Label className='font-semibold'>Preferred measurement system?</Label>
           <div className="grid grid-cols-2 gap-2">
             <Card
-              className={`p-4 cursor-pointer transition-all ${
-                isMetric ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
-              }`}
+              className={`p-4 cursor-pointer transition-all ${isMetric ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+                }`}
               onClick={() => handleUnitToggle('metric')}
             >
               <div className="text-center">
@@ -72,9 +75,8 @@ export function PersonalInfoStep({}: PersonalInfoStepProps) {
               </div>
             </Card>
             <Card
-              className={`p-4 cursor-pointer transition-all ${
-                !isMetric ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
-              }`}
+              className={`p-4 cursor-pointer transition-all ${!isMetric ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+                }`}
               onClick={() => handleUnitToggle('imperial')}
             >
               <div className="text-center">
@@ -195,27 +197,45 @@ export function PersonalInfoStep({}: PersonalInfoStepProps) {
           </div>
         </div>
 
-        {/* Gender */}
-        <div className="space-y-2">
-          <Label className='font-semibold'>Gender</Label>
-          <Select 
-            value={watchedValues.gender || ''} 
-            onValueChange={(value) => setValue('gender', value as any)}
-          >
-            <SelectTrigger className="form-input">
-              <SelectValue placeholder="Select gender" />
-            </SelectTrigger>
-            <SelectContent>
-              {GENDER_OPTIONS.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {errors.gender && (
-            <p className="text-sm text-destructive">{errors.gender.message}</p>
-          )}
+        {/* Age and Gender */}
+        <div className="grid grid-cols-2 gap-4">
+          {/* Age */}
+          <div className="space-y-2">
+            <Label className='font-semibold'>Age</Label>
+            <Input
+              id="age"
+              type="number"
+              placeholder="Enter your age"
+              {...register('age')}
+              className="form-input"
+            />
+            {errors.age && (
+              <p className="text-sm text-destructive">{errors.age.message}</p>
+            )}
+          </div>
+
+          {/* Gender */}
+          <div className="space-y-2">
+            <Label className='font-semibold'>Gender</Label>
+            <Select
+              value={watchedValues.gender || ''}
+              onValueChange={(value) => setValue('gender', value as any)}
+            >
+              <SelectTrigger className="form-input w-full">
+                <SelectValue placeholder="Select gender" />
+              </SelectTrigger>
+              <SelectContent>
+                {GENDER_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {errors.gender && (
+              <p className="text-sm text-destructive">{errors.gender.message}</p>
+            )}
+          </div>
         </div>
       </div>
     </div>

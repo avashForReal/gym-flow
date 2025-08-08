@@ -61,7 +61,7 @@ export function GoalsStep({}: GoalsStepProps) {
           <Input
             id="targetWeight"
             type="number"
-            placeholder={`e.g. ${isMetric ? '65' : '145'}`}
+            placeholder={`${isMetric ? 'Enter your target weight in kg' : 'Enter your target weight in lbs'}`}
             {...register('targetWeight')}
             className="form-input"
           />

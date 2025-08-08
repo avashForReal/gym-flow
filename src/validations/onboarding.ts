@@ -13,6 +13,7 @@ export const onboardingSchema = z
     gender: z
       .enum(["male", "female", "other", "prefer-not-to-say"] as const)
       .nullable(),
+    age: z.string().min(1, "Age is required"),
     primaryGoal: z
       .enum([
         "lose-weight",
@@ -195,6 +196,7 @@ export const personalInfoSchema = onboardingSchema.pick({
   weight: true,
   gender: true,
   preferredUnits: true,
+  age: true,
 });
 
 export const goalsSchema = onboardingSchema.pick({

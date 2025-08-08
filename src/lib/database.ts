@@ -6,8 +6,10 @@ export interface UserProfile {
   heightCm: number;
   heightFeet: number;
   heightInches: number;
-  weight: number;
-  targetWeight: number; 
+  weightKg: number;
+  weightLbs: number;
+  targetWeightKg: number; 
+  targetWeightLbs: number;
   gender: "male" | "female" | "other" | "prefer-not-to-say";
   activityLevel:
     | "sedentary"
