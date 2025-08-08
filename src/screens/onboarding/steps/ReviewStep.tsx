@@ -1,7 +1,3 @@
-/**
- * Review step for onboarding
- */
-
 import { useFormContext } from 'react-hook-form';
 import { Card } from '@/components/ui/card';
 import { PRIMARY_GOALS, ACTIVITY_LEVELS, EXPERIENCE_LEVELS, GENDER_OPTIONS } from '@/types/user';
@@ -36,7 +32,7 @@ export function ReviewStep({}: ReviewStepProps) {
       <div className="text-center">
         <div className="text-4xl mb-4">✅</div>
         <p className="text-muted-foreground">
-          Let's review your information before we create your profile
+          Let's review your information before we create your profile.
         </p>
       </div>
 

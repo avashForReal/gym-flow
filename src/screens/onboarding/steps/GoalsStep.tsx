@@ -17,7 +17,6 @@ export function GoalsStep({}: GoalsStepProps) {
   const { register, watch, setValue, formState: { errors } } = useFormContext<OnboardingFormData>();
   const watchedValues = watch();
   const isMetric = watchedValues.preferredUnits === 'metric';
-  // Target weight is now required for all goals
 
   return (
     <div className="space-y-6">

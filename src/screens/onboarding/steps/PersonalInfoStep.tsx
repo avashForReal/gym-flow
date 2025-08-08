@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card } from '@/components/ui/card';
 import { GENDER_OPTIONS } from '@/types/user';
 import type { PersonalInfoFormData } from '@/validations/onboarding';
+import { useMemo, useCallback } from 'react';
 
 interface PersonalInfoStepProps {
   onNext: () => void;
@@ -14,9 +15,23 @@ interface PersonalInfoStepProps {
 }
 
 export function PersonalInfoStep({}: PersonalInfoStepProps) {
-  const { register, watch, setValue, formState: { errors } } = useFormContext<PersonalInfoFormData>();
+  const { register, watch, setValue, formState: { errors }, clearErrors, trigger } = useFormContext<PersonalInfoFormData>();
   const watchedValues = watch();
-  const isMetric = watchedValues.preferredUnits === 'metric';
+  const isMetric = useMemo(() => watchedValues.preferredUnits === 'metric', [watchedValues.preferredUnits]);
+
+  const handleUnitToggle = useCallback((units: 'metric' | 'imperial') => {
+    clearErrors(['heightCm', 'heightFeet', 'heightInches']);
+    setValue('preferredUnits', units, { shouldValidate: false });
+    setValue('weight', '', { shouldValidate: false });
+    if (units === 'metric') {
+      setValue('heightFeet', null, { shouldValidate: false });
+      setValue('heightInches', null, { shouldValidate: false });
+      trigger(['heightCm', 'weight']);
+    } else {
+      setValue('heightCm', '', { shouldValidate: false });
+      trigger(['heightFeet', 'heightInches', 'weight']);
+    }
+  }, [setValue, clearErrors]);
 
   return (
     <div className="space-y-6">
@@ -49,7 +64,7 @@ export function PersonalInfoStep({}: PersonalInfoStepProps) {
               className={`p-4 cursor-pointer transition-all ${
                 isMetric ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
               }`}
-              onClick={() => setValue('preferredUnits', 'metric')}
+              onClick={() => handleUnitToggle('metric')}
             >
               <div className="text-center">
                 <div className="font-semibold">Metric</div>
@@ -60,7 +75,7 @@ export function PersonalInfoStep({}: PersonalInfoStepProps) {
               className={`p-4 cursor-pointer transition-all ${
                 !isMetric ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
               }`}
-              onClick={() => setValue('preferredUnits', 'imperial')}
+              onClick={() => handleUnitToggle('imperial')}
             >
               <div className="text-center">
                 <div className="font-semibold">Imperial</div>
@@ -78,17 +93,20 @@ export function PersonalInfoStep({}: PersonalInfoStepProps) {
               Height {isMetric ? '(cm)' : ''}
             </Label>
             {isMetric ? (
-              <div>
+              <div className="space-y-1">
                 <Input
                   id="height"
                   type="number"
-                  placeholder="175"
+                  placeholder="Height in cm"
                   {...register('heightCm')}
                   className="form-input"
                 />
-                {errors.heightCm && (
-                  <p className="text-sm text-destructive mt-1">{errors.heightCm.message}</p>
-                )}
+                {/* Reserve space for error message to prevent layout shift */}
+                <div className="min-h-[1.25rem]">
+                  {errors.heightCm && (
+                    <p className="text-sm text-destructive">{errors.heightCm.message}</p>
+                  )}
+                </div>
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-2">
@@ -97,51 +115,82 @@ export function PersonalInfoStep({}: PersonalInfoStepProps) {
                   <Input
                     id="heightFeet"
                     type="number"
-                    placeholder="5"
+                    placeholder="Height in feet"
                     min="3"
                     max="8"
                     {...register('heightFeet')}
                     className="form-input"
                   />
-                  {errors.heightFeet && (
-                    <p className="text-xs text-destructive mt-1">{errors.heightFeet.message}</p>
-                  )}
+                  {/* Reserve space for error message */}
+                  <div className="min-h-[1rem]">
+                    {errors.heightFeet && (
+                      <p className="text-xs text-destructive">{errors.heightFeet.message}</p>
+                    )}
+                  </div>
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="heightInches" className="text-sm text-muted-foreground">Inches</Label>
                   <Input
                     id="heightInches"
                     type="number"
-                    placeholder="10"
+                    placeholder="Height in inches"
                     min="0"
                     max="11"
                     {...register('heightInches')}
                     className="form-input"
                   />
-                  {errors.heightInches && (
-                    <p className="text-xs text-destructive mt-1">{errors.heightInches.message}</p>
-                  )}
+                  {/* Reserve space for error message */}
+                  <div className="min-h-[1rem]">
+                    {errors.heightInches && (
+                      <p className="text-xs text-destructive">{errors.heightInches.message}</p>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
           </div>
 
           {/* Weight Section */}
-          <div className="space-y-2 flex flex-col">
+          <div className="space-y-2">
             <Label htmlFor="weight" className='font-semibold'>
               Weight ({isMetric ? 'kg' : 'lbs'})
             </Label>
-            <div className="flex-1 flex items-end">
-              <Input
-                id="weight"
-                type="number"
-                placeholder={isMetric ? '70' : '155'}
-                {...register('weight')}
-                className="form-input"
-              />
-            </div>
-            {errors.weight && (
-              <p className="text-sm text-destructive">{errors.weight.message}</p>
+            {isMetric ? (
+              <div className="space-y-1">
+                <Input
+                  id="weight"
+                  type="number"
+                  placeholder="Weight in kg"
+                  {...register('weight')}
+                  className="form-input"
+                />
+                {/* Reserve space for error message to match metric height */}
+                <div className="min-h-[1.25rem]">
+                  {errors.weight && (
+                    <p className="text-sm text-destructive">{errors.weight.message}</p>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                {/* Add invisible label to match height section structure */}
+                <div className="text-sm text-transparent select-none">Weight</div>
+                <Input
+                  id="weight"
+                  type="number"
+                  placeholder="Weight in lbs"
+                  {...register('weight')}
+                  className="form-input"
+                />
+                {/* Reserve space for error message to match imperial height total */}
+                <div className="min-h-[1rem]">
+                  {errors.weight && (
+                    <p className="text-xs text-destructive">{errors.weight.message}</p>
+                  )}
+                </div>
+                {/* Add second invisible error space to match height section */}
+                <div className="min-h-[1rem]"></div>
+              </div>
             )}
           </div>
         </div>

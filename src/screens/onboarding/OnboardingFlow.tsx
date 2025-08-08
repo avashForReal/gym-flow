@@ -39,12 +39,11 @@ export function OnboardingFlow({ isLoading = false }: OnboardingFlowProps) {
 
   const createUserProfile = useCreateUserProfile();
 
-  // React Hook Form setup
   const form = useForm<OnboardingFormData>({
     resolver: zodResolver(onboardingSchema),
     defaultValues: {
       name: '',
-      preferredUnits: 'metric',
+      preferredUnits: 'imperial',
       heightCm: '',
       heightFeet: null,
       heightInches: null,
