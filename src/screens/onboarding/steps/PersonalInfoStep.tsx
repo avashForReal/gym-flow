@@ -208,6 +208,17 @@ export function PersonalInfoStep({ }: PersonalInfoStepProps) {
               placeholder="Enter your age"
               {...register('age')}
               className="form-input"
+              min={1}
+              step={1}
+              onKeyDown={(e) => {
+                if (e.key === '.' || e.key === '-' || e.key === 'e' || e.key === 'E') {
+                  e.preventDefault();
+                }
+              }}
+              onInput={(e) => {
+                const target = e.target as HTMLInputElement;
+                target.value = target.value.replace(/[^0-9]/g, '');
+              }}
             />
             {errors.age && (
               <p className="text-sm text-destructive">{errors.age.message}</p>

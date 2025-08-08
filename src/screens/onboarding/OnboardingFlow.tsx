@@ -9,6 +9,7 @@ import { LoaderWrapper } from '@/components/loader/loader';
 import { onboardingSchema, type OnboardingFormData } from '@/validations/onboarding';
 import { useOnboardingFlow } from './hook/useOnboardingFlow';
 import { getConvertedMeasurements } from './helper/convert-values';
+import type { UserProfile } from '@/lib/database';
 
 type OnboardingFlowProps = {
   isLoading: boolean;
@@ -65,8 +66,10 @@ export function OnboardingFlow({ isLoading = false }: OnboardingFlowProps) {
         targetWeight: data.targetWeight!,
       });
 
-      const userProfile = {
+      const userProfile: UserProfile = {
+        id: 1,
         name: data.name,
+        age: parseInt(data.age),
         heightCm,
         heightFeet,
         heightInches,
@@ -79,10 +82,11 @@ export function OnboardingFlow({ isLoading = false }: OnboardingFlowProps) {
         primaryGoal: data.primaryGoal || 'general-fitness',
         experienceLevel: data.experienceLevel || 'beginner',
         preferredUnits: data.preferredUnits,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
 
-      console.log("userProfile", userProfile);
-      // await createUserProfile(userProfile);
+      await createUserProfile(userProfile);
     } catch (error) {
       console.error('Error completing onboarding:', error);
       // Handle error (show toast, etc.)

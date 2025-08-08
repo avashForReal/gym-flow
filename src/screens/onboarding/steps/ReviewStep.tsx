@@ -71,10 +71,14 @@ export function ReviewStep({}: ReviewStepProps) {
 
       <Card className="glass p-4 border border-border/50">
         <div className="space-y-3">
-          <div className="grid grid-cols-2 gap-3 text-sm">
+          <div className="space-y-2 text-sm">
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground font-medium">📝 Name</span>
               <span className="font-bold text-foreground truncate ml-2">{formData.name || 'Not set'}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground font-medium">🎂 Age</span>
+              <span className="font-bold text-foreground">{formData.age ? `${formData.age} years` : 'Not set'}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground font-medium">📏 Height</span>
