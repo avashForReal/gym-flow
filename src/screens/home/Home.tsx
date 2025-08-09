@@ -11,6 +11,7 @@ import {
   Trophy,
   Clock
 } from "lucide-react"
+import Header from "@/components/header/header"
 const Home = () => {
   const [activePlan, setActivePlan] = useState<any>(null)
   const [todayProgress, setTodayProgress] = useState(0)
@@ -54,21 +55,22 @@ const Home = () => {
 
   return (
     <div>
-      <div className="container mx-auto px-4 py-6 space-y-6">
+      <Header />
+      <div className="px-4 py-4 space-y-4">
         <Card className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border-slate-200 dark:border-slate-700">
-          <CardHeader>
+          <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-lg">
                   <Calendar className="h-5 w-5" />
-                  Active Workout Plan
+                  Active Plan
                 </CardTitle>
                 <CardDescription>
                   {activePlan ? `Following: ${activePlan.name}` : "No active plan selected"}
                 </CardDescription>
               </div>
               <Button variant="outline" size="sm" onClick={() => console.log("Manage plans")}>
-                Manage Plans
+                Manage
               </Button>
             </div>
           </CardHeader>
@@ -116,8 +118,8 @@ const Home = () => {
         </Card>
 
         <div>
-          <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <h2 className="text-lg font-semibold mb-3">Quick Actions</h2>
+          <div className="grid grid-cols-2 gap-3">
             {quickActions.map((action, index) => (
               <Card
                 key={index}
@@ -125,12 +127,12 @@ const Home = () => {
                   }`}
                 onClick={action.disabled ? undefined : action.action}
               >
-                <CardContent className="p-6">
-                  <div className={`w-12 h-12 rounded-lg ${action.color} flex items-center justify-center mb-4`}>
-                    <action.icon className="h-6 w-6 text-white" />
+                <CardContent className="p-4">
+                  <div className={`w-10 h-10 rounded-lg ${action.color} flex items-center justify-center mb-3`}>
+                    <action.icon className="h-5 w-5 text-white" />
                   </div>
-                  <h3 className="font-semibold mb-2">{action.title}</h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">{action.description}</p>
+                  <h3 className="font-semibold mb-1 text-sm">{action.title}</h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">{action.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -138,8 +140,8 @@ const Home = () => {
         </div>
 
         <Card className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border-slate-200 dark:border-slate-700">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-lg">
               <Clock className="h-5 w-5" />
               Recent Activity
             </CardTitle>

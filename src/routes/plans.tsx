@@ -26,16 +26,16 @@ function PlansPage() {
   ]
 
   return (
-    <div className="container mx-auto px-4 py-6 space-y-6">
+    <div className="px-4 py-4 space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Workout Plans</h1>
-            <p className="text-slate-600 dark:text-slate-400">Manage your training programs</p>
+            <h1 className="text-xl font-bold">Workout Plans</h1>
+            <p className="text-sm text-slate-600 dark:text-slate-400">Manage your training programs</p>
           </div>
-          <Button>
+          <Button size="sm">
             <Plus className="h-4 w-4 mr-2" />
-            Create Plan
+            Create
           </Button>
         </div>
 

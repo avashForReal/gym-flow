@@ -38,10 +38,10 @@ export function PersonalInfoStep({ }: PersonalInfoStepProps) {
   }, [setValue, clearErrors]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="text-center">
-        <div className="text-4xl mb-4">👤</div>
-        <p className="text-muted-foreground">
+        <div className="text-3xl mb-3">👤</div>
+        <p className="text-sm text-muted-foreground">
           Help us personalize your experience with some basic information.
         </p>
       </div>
@@ -62,36 +62,36 @@ export function PersonalInfoStep({ }: PersonalInfoStepProps) {
 
         {/* Units preference */}
         <div className="space-y-2">
-          <Label className='font-semibold'>Preferred measurement system?</Label>
+          <Label className='font-semibold text-sm'>Preferred measurement system?</Label>
           <div className="grid grid-cols-2 gap-2">
             <Card
-              className={`p-4 cursor-pointer transition-all ${isMetric ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+              className={`p-3 cursor-pointer transition-all ${isMetric ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
                 }`}
               onClick={() => handleUnitToggle('metric')}
             >
               <div className="text-center">
-                <div className="font-semibold">Metric</div>
-                <div className="text-sm text-muted-foreground">kg, cm</div>
+                <div className="font-semibold text-sm">Metric</div>
+                <div className="text-xs text-muted-foreground">kg, cm</div>
               </div>
             </Card>
             <Card
-              className={`p-4 cursor-pointer transition-all ${!isMetric ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+              className={`p-3 cursor-pointer transition-all ${!isMetric ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
                 }`}
               onClick={() => handleUnitToggle('imperial')}
             >
               <div className="text-center">
-                <div className="font-semibold">Imperial</div>
-                <div className="text-sm text-muted-foreground">lbs, ft/in</div>
+                <div className="font-semibold text-sm">Imperial</div>
+                <div className="text-xs text-muted-foreground">lbs, ft/in</div>
               </div>
             </Card>
           </div>
         </div>
 
         {/* Physical stats */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           {/* Height Section */}
           <div className="space-y-2">
-            <Label htmlFor="height" className='font-semibold'>
+            <Label htmlFor="height" className='font-semibold text-sm'>
               Height {isMetric ? '(cm)' : ''}
             </Label>
             {isMetric ? (
@@ -154,7 +154,7 @@ export function PersonalInfoStep({ }: PersonalInfoStepProps) {
 
           {/* Weight Section */}
           <div className="space-y-2">
-            <Label htmlFor="weight" className='font-semibold'>
+            <Label htmlFor="weight" className='font-semibold text-sm'>
               Weight ({isMetric ? 'kg' : 'lbs'})
             </Label>
             {isMetric ? (
@@ -198,10 +198,10 @@ export function PersonalInfoStep({ }: PersonalInfoStepProps) {
         </div>
 
         {/* Age and Gender */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           {/* Age */}
           <div className="space-y-2">
-            <Label className='font-semibold'>Age</Label>
+            <Label className='font-semibold text-sm'>Age</Label>
             <Input
               id="age"
               type="number"
@@ -227,7 +227,7 @@ export function PersonalInfoStep({ }: PersonalInfoStepProps) {
 
           {/* Gender */}
           <div className="space-y-2">
-            <Label className='font-semibold'>Gender</Label>
+            <Label className='font-semibold text-sm'>Gender</Label>
             <Select
               value={watchedValues.gender || ''}
               onValueChange={(value) => setValue('gender', value as any)}

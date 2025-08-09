@@ -19,31 +19,31 @@ export function GoalsStep({}: GoalsStepProps) {
   const isMetric = watchedValues.preferredUnits === 'metric';
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="text-center">
-        <div className="text-4xl mb-4">🎯</div>
-        <p className="text-muted-foreground">
+        <div className="text-3xl mb-3">🎯</div>
+        <p className="text-sm text-muted-foreground">
           What's your primary fitness goal? This helps us tailor your experience.
         </p>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         {/* Primary Goal */}
-        <div className="space-y-3">
-          <Label className='font-semibold'>Primary Goal</Label>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="space-y-2">
+          <Label className='font-semibold text-sm'>Primary Goal</Label>
+          <div className="grid grid-cols-2 gap-2">
             {PRIMARY_GOALS.map((goal) => (
               <Card
                 key={goal.value}
-                className={`p-4 cursor-pointer transition-all ${watchedValues.primaryGoal === goal.value
+                className={`p-3 cursor-pointer transition-all ${watchedValues.primaryGoal === goal.value
                   ? 'border-primary bg-primary/5'
                   : 'border-border'
                   }`}
                 onClick={() => setValue('primaryGoal', goal.value)}
               >
-                <div className="text-center space-y-2">
-                  <div className="text-2xl">{goal.icon}</div>
-                  <div className="font-semibold text-sm">{goal.label}</div>
+                <div className="text-center space-y-1">
+                  <div className="text-xl">{goal.icon}</div>
+                  <div className="font-semibold text-xs">{goal.label}</div>
                 </div>
               </Card>
             ))}
@@ -55,7 +55,7 @@ export function GoalsStep({}: GoalsStepProps) {
 
         {/* Target Weight (required) */}
         <div className="space-y-2">
-          <Label htmlFor="targetWeight" className='font-semibold'>
+          <Label htmlFor="targetWeight" className='font-semibold text-sm'>
             Target Weight ({isMetric ? 'kg' : 'lbs'})
           </Label>
           <Input
@@ -71,8 +71,8 @@ export function GoalsStep({}: GoalsStepProps) {
         </div>
 
         {/* Activity Level */}
-        <div className="space-y-3">
-          <Label className='font-semibold'>Current Activity Level</Label>
+        <div className="space-y-2">
+          <Label className='font-semibold text-sm'>Current Activity Level</Label>
           <Select
             value={watchedValues.activityLevel || ''}
             onValueChange={(value) => setValue('activityLevel', value as any)}

@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
+import { useEffect } from 'react';
 
 import { useCreateUserProfile } from '@/stores/userStore';
 import { LoaderWrapper } from '@/components/loader/loader';
@@ -18,6 +19,17 @@ type OnboardingFlowProps = {
 
 export function OnboardingFlow({ isLoading = false }: OnboardingFlowProps) {
   const createUserProfile = useCreateUserProfile();
+
+  // Add class to body to allow scrolling during onboarding
+  useEffect(() => {
+    document.body.classList.add('onboarding-active');
+    document.documentElement.classList.add('onboarding-active');
+    
+    return () => {
+      document.body.classList.remove('onboarding-active');
+      document.documentElement.classList.remove('onboarding-active');
+    };
+  }, []);
 
   const form = useForm<OnboardingFormData>({
     resolver: zodResolver(onboardingSchema),
@@ -98,16 +110,16 @@ export function OnboardingFlow({ isLoading = false }: OnboardingFlowProps) {
   return (
     <LoaderWrapper isLoading={isLoading} size='large'>
       <FormProvider {...form}>
-        <div className="min-h-screen bg-background flex items-center justify-center p-4">
-          <div className="w-full max-w-2xl">
+        <div className="onboarding-container">
+          <div className="container mx-auto max-w-md p-4 py-8">
             {/* Progress header */}
-            <div className="mb-8 text-center">
-              <div className="flex items-center justify-center space-x-4 mb-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center text-2xl">
+            <div className="mb-6 text-center">
+              <div className="flex items-center justify-center space-x-3 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center text-xl">
                   🔥
                 </div>
                 <div>
-                  <h1 className="text-2xl font-black gradient-text">GYMFLOW</h1>
+                  <h1 className="text-xl font-black gradient-text">GYMFLOW</h1>
                   <p className="text-xs text-muted-foreground font-medium tracking-wide uppercase">
                     SETUP YOUR PROFILE
                   </p>
@@ -124,10 +136,10 @@ export function OnboardingFlow({ isLoading = false }: OnboardingFlowProps) {
             </div>
 
             {/* Step content */}
-            <Card className="  glass p-8 border border-border/50">
-              <div className="space-y-6">
+            <Card className="glass p-6 border border-border/50">
+              <div className="space-y-4">
                 <div className="text-center">
-                  <h2 className="text-2xl font-bold mb-2">{currentStepData.title}</h2>
+                  <h2 className="text-lg font-bold mb-2">{currentStepData.title}</h2>
                 </div>
 
                 <StepComponent
@@ -139,12 +151,12 @@ export function OnboardingFlow({ isLoading = false }: OnboardingFlowProps) {
 
                 {/* Navigation buttons */}
                 {currentStepNumber > 0 && (
-                  <div className="flex justify-between pt-6 border-t border-border/50">
+                  <div className="flex justify-between pt-4 border-t border-border/50 gap-3">
                     <Button
                       variant="outline"
                       onClick={handleBack}
                       disabled={isSubmitting}
-                      className="modern-btn"
+                      className="modern-btn flex-1"
                     >
                       ← Back
                     </Button>
@@ -153,7 +165,7 @@ export function OnboardingFlow({ isLoading = false }: OnboardingFlowProps) {
                       <Button
                         onClick={handleSubmit(onSubmit as any)}
                         disabled={isSubmitting}
-                        className="modern-btn bg-gradient-to-r from-primary to-accent text-white border-0"
+                        className="modern-btn bg-gradient-to-r from-primary to-accent text-white border-0 flex-1"
                       >
                         {isSubmitting ? (
                           <div className="flex items-center space-x-2">
@@ -168,7 +180,7 @@ export function OnboardingFlow({ isLoading = false }: OnboardingFlowProps) {
                       <Button
                         onClick={handleNext}
                         disabled={isSubmitting}
-                        className="modern-btn bg-primary text-primary-foreground"
+                        className="modern-btn bg-primary text-primary-foreground flex-1"
                       >
                         Next →
                       </Button>
@@ -179,11 +191,11 @@ export function OnboardingFlow({ isLoading = false }: OnboardingFlowProps) {
             </Card>
 
             {/* Step indicators */}
-            <div className="flex justify-center space-x-2 mt-6">
+            <div className="flex justify-center space-x-2 mt-4 mb-8">
               {Array.from({ length: totalSteps }).map((_, index) => (
                 <div
                   key={index}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${index <= currentStepNumber
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${index <= currentStepNumber
                     ? 'bg-primary scale-110'
                     : 'bg-muted scale-100'
                     }`}

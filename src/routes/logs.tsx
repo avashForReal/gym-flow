@@ -60,34 +60,32 @@ function LogsPage() {
   ]
 
   return (
-    <div className="container mx-auto px-4 py-6 space-y-6">
+    <div className="px-4 py-4 space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Workout Logs</h1>
-            <p className="text-slate-600 dark:text-slate-400">Track your training progress</p>
+            <h1 className="text-xl font-bold">Workout Logs</h1>
+            <p className="text-sm text-slate-600 dark:text-slate-400">Track your training progress</p>
           </div>
-          <Button>
+          <Button size="sm">
             <Plus className="h-4 w-4 mr-2" />
-            Start Workout
+            Start
           </Button>
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-3">
           {stats.map((stat, index) => (
             <Card key={index} className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border-slate-200 dark:border-slate-700">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className={`p-2 bg-slate-100 dark:bg-slate-700/50 rounded-lg`}>
-                    <stat.icon className={`h-5 w-5 ${stat.color}`} />
+              <CardContent className="p-3">
+                <div className="flex flex-col items-center text-center">
+                  <div className={`p-2 bg-slate-100 dark:bg-slate-700/50 rounded-lg mb-2`}>
+                    <stat.icon className={`h-4 w-4 ${stat.color}`} />
                   </div>
-                  <div>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">{stat.label}</p>
-                    <p className="font-semibold">
-                      {stat.value} <span className="text-sm font-normal">{stat.unit}</span>
-                    </p>
-                  </div>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">{stat.label}</p>
+                  <p className="font-semibold text-sm">
+                    {stat.value} <span className="text-xs font-normal">{stat.unit}</span>
+                  </p>
                 </div>
               </CardContent>
             </Card>
