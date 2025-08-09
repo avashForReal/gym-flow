@@ -291,6 +291,15 @@
     border-color: var(--primary) !important; /* Red focus */
     box-shadow: 0 0 0 3px rgba(180, 18, 27, 0.1) !important;
   }
+  
+  .form-switch {
+    border: 2px solid var(--border) !important;
+    background-color: #e5e7eb !important; /* gray-200 as default (off) */
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s;
+  }
+  .form-switch[data-state="checked"] {
+    background-color: var(--primary) !important;
+  }
 
   /* Dark mode form input adjustments */
   .dark .form-input:hover {
