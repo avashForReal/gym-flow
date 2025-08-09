@@ -1,28 +1,160 @@
-import { useCurrentUser, useInitializeUser, useIsFirstTimeUser, useIsLoading, useResetUser } from "@/stores/userStore"
-import { useEffect } from "react"
-import { OnboardingFlow } from "../onboarding/OnboardingFlow"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
-
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Progress } from "@/components/ui/progress"
+import {
+  Calendar,
+  Dumbbell,
+  Plus,
+  Play,
+  History,
+  Trophy,
+  Clock
+} from "lucide-react"
 const Home = () => {
-  const isLoading = useIsLoading()
-  const isFirstTimeUser = useIsFirstTimeUser()
-  const initializeUser = useInitializeUser()
-  const resetUser = useResetUser()
-  const currentUser = useCurrentUser()
+  const [activePlan, setActivePlan] = useState<any>(null)
+  const [todayProgress, setTodayProgress] = useState(0)
 
-  useEffect(() => {
-    initializeUser()
-  }, [])
-
-  // show onboarding for first-time users
-  if (isFirstTimeUser || !currentUser) {
-    return <OnboardingFlow isLoading={isLoading} />
+  const getDayName = (dayIndex: number) => {
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    return days[dayIndex]
   }
 
+  const quickActions = [
+    {
+      title: "Start Today's Workout",
+      description: "Begin your scheduled workout",
+      icon: Play,
+      action: () => console.log("Start workout"),
+      color: "bg-gradient-to-r from-green-500 to-emerald-600",
+      disabled: !activePlan
+    },
+    {
+      title: "Create New Plan",
+      description: "Design a custom workout plan",
+      icon: Plus,
+      action: () => console.log("Create plan"),
+      color: "bg-gradient-to-r from-blue-500 to-indigo-600"
+    },
+    {
+      title: "View History",
+      description: "Check your workout progress",
+      icon: History,
+      action: () => console.log("View history"),
+      color: "bg-gradient-to-r from-purple-500 to-violet-600"
+    },
+    {
+      title: "Personal Records",
+      description: "See your achievements",
+      icon: Trophy,
+      action: () => console.log("View PRs"),
+      color: "bg-gradient-to-r from-orange-500 to-red-600"
+    }
+  ]
+
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <h1>Home, {currentUser.name}.</h1>
-      <Button onClick={() => resetUser()}>Reset User</Button>
+    <div>
+      <div className="container mx-auto px-4 py-6 space-y-6">
+        <Card className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border-slate-200 dark:border-slate-700">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5" />
+                  Active Workout Plan
+                </CardTitle>
+                <CardDescription>
+                  {activePlan ? `Following: ${activePlan.name}` : "No active plan selected"}
+                </CardDescription>
+              </div>
+              <Button variant="outline" size="sm" onClick={() => console.log("Manage plans")}>
+                Manage Plans
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {activePlan ? (
+              <div className="space-y-4">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium">Today's Progress</span>
+                    <span className="text-sm text-slate-600 dark:text-slate-400">{todayProgress}%</span>
+                  </div>
+                  <Progress value={todayProgress} className="h-2" />
+                </div>
+                <div className="grid grid-cols-7 gap-2">
+                  {Array.from({ length: 7 }, (_, i) => (
+                    <div
+                      key={i}
+                      className={`p-3 rounded-lg text-center text-sm ${i === new Date().getDay() - 1
+                        ? 'bg-blue-100 dark:bg-blue-900/30 border-2 border-blue-300 dark:border-blue-600'
+                        : 'bg-slate-100 dark:bg-slate-700/50'
+                        }`}
+                    >
+                      <div className="font-medium">{getDayName(i).slice(0, 3)}</div>
+                      <div className="text-xs text-slate-600 dark:text-slate-400">
+                        {activePlan.days?.[i]?.exercises?.length || 0} exercises
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <Dumbbell className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                <h3 className="font-medium mb-2">No Active Plan</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                  Create or select a workout plan to get started
+                </p>
+                <Button onClick={() => console.log("Create plan")}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Your First Plan
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {quickActions.map((action, index) => (
+              <Card
+                key={index}
+                className={`bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:shadow-lg transition-all duration-200 cursor-pointer ${action.disabled ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'
+                  }`}
+                onClick={action.disabled ? undefined : action.action}
+              >
+                <CardContent className="p-6">
+                  <div className={`w-12 h-12 rounded-lg ${action.color} flex items-center justify-center mb-4`}>
+                    <action.icon className="h-6 w-6 text-white" />
+                  </div>
+                  <h3 className="font-semibold mb-2">{action.title}</h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">{action.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        <Card className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border-slate-200 dark:border-slate-700">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Clock className="h-5 w-5" />
+              Recent Activity
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-8">
+              <History className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+              <h3 className="font-medium mb-2">No Recent Workouts</h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Start your first workout to see your activity here
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }
