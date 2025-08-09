@@ -30,15 +30,17 @@ export interface UserProfile {
   updatedAt: Date;
 }
 
-interface WorkoutPlan {
+export interface WorkoutPlan {
   id: number;
   name: string;
+  description?: string;
   days: WorkoutPlanDay[];
+  isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface WorkoutPlanDay {
+export interface WorkoutPlanDay {
   id: number;
   planId: number;
   dayIndex: number; // 0..6 (7 days)
@@ -49,7 +51,7 @@ interface WorkoutPlanDay {
   updatedAt: Date;
 }
 
-interface WorkoutPlanExercise {
+export interface WorkoutPlanExercise {
   id: number;
   planId: number;
   dayId: number;
@@ -137,6 +139,181 @@ export class GymFlowDatabase extends Dexie {
       exportDate: new Date(),
       version: 1,
     };
+  }
+
+  // Workout Plan Operations
+  async createWorkoutPlan(planData: {
+    name: string;
+    description?: string;
+    days: Array<{
+      dayIndex: number;
+      name: string;
+      customName?: string;
+      isRestDay: boolean;
+      exercises: Array<{ exerciseId: string }>;
+    }>;
+  }): Promise<number> {
+    const now = new Date();
+    
+    // Create the plan
+    const planId = await this.workoutPlans.add({
+      name: planData.name,
+      description: planData.description,
+      createdAt: now,
+      updatedAt: now
+    } as WorkoutPlan);
+
+    if (typeof planId === 'undefined') {
+      throw new Error('Failed to create workout plan');
+    }
+
+    // Create the days and exercises
+    for (const dayData of planData.days) {
+      const dayName = dayData.customName 
+        ? `${dayData.name} [${dayData.customName}]`
+        : dayData.name;
+
+      const dayId = await this.workoutPlanDays.add({
+        planId: planId as number,
+        dayIndex: dayData.dayIndex,
+        name: dayName,
+        isRestDay: dayData.isRestDay,
+        createdAt: now,
+        updatedAt: now
+      } as WorkoutPlanDay);
+
+      if (typeof dayId === 'undefined') {
+        throw new Error(`Failed to create day ${dayData.dayIndex}`);
+      }
+
+      // Add exercises for this day
+      for (const exercise of dayData.exercises) {
+        await this.workoutPlanExercises.add({
+          planId: planId as number,
+          dayId: dayId as number,
+          exerciseId: exercise.exerciseId,
+          createdAt: now,
+          updatedAt: now
+        } as WorkoutPlanExercise);
+      }
+    }
+
+    return planId as number;
+  }
+
+  async getWorkoutPlans(): Promise<WorkoutPlan[]> {
+    const plans = await this.workoutPlans.orderBy('createdAt').reverse().toArray();
+    
+    // Load days and exercises for each plan
+    for (const plan of plans) {
+      const days = await this.workoutPlanDays
+        .where('planId')
+        .equals(plan.id)
+        .toArray();
+      days.sort((a, b) => a.dayIndex - b.dayIndex);
+
+      for (const day of days) {
+        day.exercises = await this.workoutPlanExercises
+          .where('dayId')
+          .equals(day.id)
+          .toArray();
+      }
+
+      plan.days = days;
+    }
+
+    return plans;
+  }
+
+  async getWorkoutPlan(planId: number): Promise<WorkoutPlan | undefined> {
+    const plan = await this.workoutPlans.get(planId);
+    if (!plan) return undefined;
+
+    const days = await this.workoutPlanDays
+      .where('planId')
+      .equals(planId)
+      .toArray();
+    days.sort((a, b) => a.dayIndex - b.dayIndex);
+
+    for (const day of days) {
+      day.exercises = await this.workoutPlanExercises
+        .where('dayId')
+        .equals(day.id)
+        .toArray();
+    }
+
+    plan.days = days;
+    return plan;
+  }
+
+  async updateWorkoutPlan(planId: number, updates: Partial<Pick<WorkoutPlan, 'name' | 'description'>>): Promise<void> {
+    await this.workoutPlans.update(planId, {
+      ...updates,
+      updatedAt: new Date()
+    });
+  }
+
+  async deleteWorkoutPlan(planId: number): Promise<void> {
+    // Delete exercises first
+    const days = await this.workoutPlanDays.where('planId').equals(planId).toArray();
+    for (const day of days) {
+      await this.workoutPlanExercises.where('dayId').equals(day.id).delete();
+    }
+    
+    // Delete days
+    await this.workoutPlanDays.where('planId').equals(planId).delete();
+    
+    // Delete plan
+    await this.workoutPlans.delete(planId);
+  }
+
+  async addExerciseToDay(dayId: number, exerciseId: string): Promise<void> {
+    const day = await this.workoutPlanDays.get(dayId);
+    if (!day) throw new Error('Day not found');
+
+    // Check if exercise already exists
+    const existingExercise = await this.workoutPlanExercises
+      .where(['dayId', 'exerciseId'])
+      .equals([dayId, exerciseId])
+      .first();
+
+    if (existingExercise) return; // Already exists
+
+    await this.workoutPlanExercises.add({
+      planId: day.planId,
+      dayId,
+      exerciseId,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    } as WorkoutPlanExercise);
+
+    // Mark day as not rest day if it was
+    if (day.isRestDay) {
+      await this.workoutPlanDays.update(dayId, { 
+        isRestDay: false, 
+        updatedAt: new Date() 
+      });
+    }
+  }
+
+  async removeExerciseFromDay(dayId: number, exerciseId: string): Promise<void> {
+    await this.workoutPlanExercises
+      .where(['dayId', 'exerciseId'])
+      .equals([dayId, exerciseId])
+      .delete();
+
+    // Check if day should become rest day
+    const remainingExercises = await this.workoutPlanExercises
+      .where('dayId')
+      .equals(dayId)
+      .count();
+
+    if (remainingExercises === 0) {
+      await this.workoutPlanDays.update(dayId, { 
+        isRestDay: true, 
+        updatedAt: new Date() 
+      });
+    }
   }
 }
 

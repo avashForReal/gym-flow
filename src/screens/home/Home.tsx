@@ -9,12 +9,22 @@ import {
   Play,
   History,
   Trophy,
-  Clock
+  Clock,
+  ArrowRight
 } from "lucide-react"
 import Header from "@/components/header/header"
+import { usePlans } from "@/hooks/usePlans"
+import { useNavigate } from "@tanstack/react-router"
 const Home = () => {
-  const [activePlan, setActivePlan] = useState<any>(null)
-  const [todayProgress, setTodayProgress] = useState(0)
+  const { getActivePlan } = usePlans();
+  const activePlan = getActivePlan();
+  const [todayProgress] = useState(0);
+
+  const navigate = useNavigate();
+
+  const handleNavigateToPlans = () => {
+    navigate({ to: "/plans" });
+  }
 
   const getDayName = (dayIndex: number) => {
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -106,11 +116,11 @@ const Home = () => {
                 <Dumbbell className="h-12 w-12 text-slate-400 mx-auto mb-4" />
                 <h3 className="font-medium mb-2">No Active Plan</h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                  Create or select a workout plan to get started
+                  Create or select a workout plan to get started!
                 </p>
-                <Button onClick={() => console.log("Create plan")}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Your First Plan
+                <Button className="px-4!" onClick={handleNavigateToPlans}>
+                  Plans
+                  <ArrowRight className="h-4 w-4" />
                 </Button>
               </div>
             )}

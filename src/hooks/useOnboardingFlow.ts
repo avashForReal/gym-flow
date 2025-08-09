@@ -5,7 +5,7 @@ import {
   GoalsStep,
   ExperienceStep,
   ReviewStep,
-} from "../steps";
+} from "@/screens/onboarding/steps";
 import type { OnboardingFormData } from "@/validations/onboarding";
 import type { UseFormReturn } from "react-hook-form";
 

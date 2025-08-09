@@ -8,14 +8,13 @@ import { useEffect } from 'react';
 import { useCreateUserProfile } from '@/stores/userStore';
 import { LoaderWrapper } from '@/components/loader/loader';
 import { onboardingSchema, type OnboardingFormData } from '@/validations/onboarding';
-import { useOnboardingFlow } from './hook/useOnboardingFlow';
-import { getConvertedMeasurements } from './helper/convert-values';
+import { getConvertedMeasurements } from '../../lib/convert-values';
 import type { UserProfile } from '@/lib/database';
+import { useOnboardingFlow } from '@/hooks/useOnboardingFlow';
 
 type OnboardingFlowProps = {
   isLoading: boolean;
 }
-
 
 export function OnboardingFlow({ isLoading = false }: OnboardingFlowProps) {
   const createUserProfile = useCreateUserProfile();
