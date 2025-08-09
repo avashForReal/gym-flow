@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button"
 import { LogOut, Settings } from "lucide-react"
 import { useResetUser } from "@/stores/userStore"
-import Logo from "../logo/logo"
+import Logo from "../../../components/logo/logo"
 
-const Header = () => {
+const HomeHeader = () => {
   const resetUser = useResetUser()
 
   return (
@@ -27,4 +27,4 @@ const Header = () => {
   )
 }
 
-export default Header
+export default HomeHeader

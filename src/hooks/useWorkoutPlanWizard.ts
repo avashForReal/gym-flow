@@ -4,7 +4,7 @@ import {
   PlanScheduleStep,
   PlanExercisesStep,
   PlanReviewStep,
-} from "@/components/workout-plan-builder/steps";
+} from "@/screens/add-plan/steps";
 import type { WorkoutPlanFormData } from "@/validations/workout-plan";
 import type { UseFormReturn } from "react-hook-form";
 

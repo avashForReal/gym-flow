@@ -12,7 +12,7 @@ import {
   Clock,
   ArrowRight
 } from "lucide-react"
-import Header from "@/components/header/header"
+import HomeHeader from "@/screens/home/home-header/home-header"
 import { usePlans } from "@/hooks/usePlans"
 import { useNavigate } from "@tanstack/react-router"
 import { getGreeting, getTodaysFormattedDate } from "@/lib/date-helper"
@@ -68,7 +68,7 @@ const Home = () => {
 
   return (
     <div>
-      <Header />
+      <HomeHeader />
       <div className="px-4 py-4 space-y-4">
         <div className="flex items-center gap-2 mb-3 mx-1">
           <div>

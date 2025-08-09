@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PlansRouteImport } from './routes/plans'
 import { Route as LogsRouteImport } from './routes/logs'
+import { Route as AddPlanRouteImport } from './routes/add-plan'
 import { Route as IndexRouteImport } from './routes/index'
 
 const PlansRoute = PlansRouteImport.update({
@@ -23,6 +24,11 @@ const LogsRoute = LogsRouteImport.update({
   path: '/logs',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AddPlanRoute = AddPlanRouteImport.update({
+  id: '/add-plan',
+  path: '/add-plan',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -31,30 +37,34 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/add-plan': typeof AddPlanRoute
   '/logs': typeof LogsRoute
   '/plans': typeof PlansRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/add-plan': typeof AddPlanRoute
   '/logs': typeof LogsRoute
   '/plans': typeof PlansRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/add-plan': typeof AddPlanRoute
   '/logs': typeof LogsRoute
   '/plans': typeof PlansRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/logs' | '/plans'
+  fullPaths: '/' | '/add-plan' | '/logs' | '/plans'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/logs' | '/plans'
-  id: '__root__' | '/' | '/logs' | '/plans'
+  to: '/' | '/add-plan' | '/logs' | '/plans'
+  id: '__root__' | '/' | '/add-plan' | '/logs' | '/plans'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AddPlanRoute: typeof AddPlanRoute
   LogsRoute: typeof LogsRoute
   PlansRoute: typeof PlansRoute
 }
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LogsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/add-plan': {
+      id: '/add-plan'
+      path: '/add-plan'
+      fullPath: '/add-plan'
+      preLoaderRoute: typeof AddPlanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AddPlanRoute: AddPlanRoute,
   LogsRoute: LogsRoute,
   PlansRoute: PlansRoute,
 }
