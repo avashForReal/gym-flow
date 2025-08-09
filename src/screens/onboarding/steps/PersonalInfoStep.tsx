@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import { GENDER_OPTIONS } from '@/types/user';
 import type { PersonalInfoFormData } from '@/validations/onboarding';
 import { useMemo, useCallback } from 'react';
+import { scrollInputIntoView } from '@/lib/input-helper';
 
 interface PersonalInfoStepProps {
   onNext: () => void;
@@ -39,13 +40,6 @@ export function PersonalInfoStep({ }: PersonalInfoStepProps) {
 
   return (
     <div className="space-y-4">
-      <div className="text-center">
-        <div className="text-3xl mb-3">👤</div>
-        <p className="text-sm text-muted-foreground">
-          Help us personalize your experience with some basic information.
-        </p>
-      </div>
-
       <div className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="name" className='font-semibold'>What should we call you?</Label>
@@ -102,6 +96,8 @@ export function PersonalInfoStep({ }: PersonalInfoStepProps) {
                   placeholder="Height in cm"
                   {...register('heightCm')}
                   className="form-input"
+                  inputMode="numeric"
+                  onFocus={scrollInputIntoView}
                 />
                 {/* Reserve space for error message to prevent layout shift */}
                 <div className="min-h-[1.25rem]">
@@ -116,12 +112,14 @@ export function PersonalInfoStep({ }: PersonalInfoStepProps) {
                   <Label htmlFor="heightFeet" className="text-sm text-muted-foreground">Feet</Label>
                   <Input
                     id="heightFeet"
+                    inputMode="numeric"
                     type="number"
                     placeholder="Height in feet"
                     min="3"
                     max="8"
                     {...register('heightFeet')}
                     className="form-input"
+                    onFocus={scrollInputIntoView}
                   />
                   {/* Reserve space for error message */}
                   <div className="min-h-[1rem]">
@@ -134,12 +132,14 @@ export function PersonalInfoStep({ }: PersonalInfoStepProps) {
                   <Label htmlFor="heightInches" className="text-sm text-muted-foreground">Inches</Label>
                   <Input
                     id="heightInches"
+                    inputMode="numeric"
                     type="number"
                     placeholder="Height in inches"
                     min="0"
                     max="11"
                     {...register('heightInches')}
                     className="form-input"
+                    onFocus={scrollInputIntoView}
                   />
                   {/* Reserve space for error message */}
                   <div className="min-h-[1rem]">
@@ -165,6 +165,8 @@ export function PersonalInfoStep({ }: PersonalInfoStepProps) {
                   placeholder="Weight in kg"
                   {...register('weight')}
                   className="form-input"
+                  inputMode="numeric"
+                  onFocus={scrollInputIntoView}
                 />
                 {/* Reserve space for error message to match metric height */}
                 <div className="min-h-[1.25rem]">
@@ -183,6 +185,8 @@ export function PersonalInfoStep({ }: PersonalInfoStepProps) {
                   placeholder="Weight in lbs"
                   {...register('weight')}
                   className="form-input"
+                  inputMode="numeric"
+                  onFocus={scrollInputIntoView}
                 />
                 {/* Reserve space for error message to match imperial height total */}
                 <div className="min-h-[1rem]">
@@ -219,6 +223,8 @@ export function PersonalInfoStep({ }: PersonalInfoStepProps) {
                 const target = e.target as HTMLInputElement;
                 target.value = target.value.replace(/[^0-9]/g, '');
               }}
+              inputMode="numeric"
+              onFocus={scrollInputIntoView}
             />
             {errors.age && (
               <p className="text-sm text-destructive">{errors.age.message}</p>

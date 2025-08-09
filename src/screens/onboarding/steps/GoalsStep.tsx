@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PRIMARY_GOALS, ACTIVITY_LEVELS } from '@/types/user';
 import type { OnboardingFormData } from '@/validations/onboarding';
+import { scrollInputIntoView } from '@/lib/input-helper';
 
 interface GoalsStepProps {
   onNext: () => void;
@@ -13,20 +14,13 @@ interface GoalsStepProps {
   isLast: boolean;
 }
 
-export function GoalsStep({}: GoalsStepProps) {
+export function GoalsStep({ }: GoalsStepProps) {
   const { register, watch, setValue, formState: { errors } } = useFormContext<OnboardingFormData>();
   const watchedValues = watch();
   const isMetric = watchedValues.preferredUnits === 'metric';
 
   return (
     <div className="space-y-4">
-      <div className="text-center">
-        <div className="text-3xl mb-3">🎯</div>
-        <p className="text-sm text-muted-foreground">
-          What's your primary fitness goal? This helps us tailor your experience.
-        </p>
-      </div>
-
       <div className="space-y-4">
         {/* Primary Goal */}
         <div className="space-y-2">
@@ -64,6 +58,8 @@ export function GoalsStep({}: GoalsStepProps) {
             placeholder={`${isMetric ? 'Enter your target weight in kg' : 'Enter your target weight in lbs'}`}
             {...register('targetWeight')}
             className="form-input"
+            inputMode="numeric"
+            onFocus={scrollInputIntoView}
           />
           {errors.targetWeight && (
             <p className="text-sm text-destructive">{errors.targetWeight.message}</p>
@@ -73,24 +69,29 @@ export function GoalsStep({}: GoalsStepProps) {
         {/* Activity Level */}
         <div className="space-y-2">
           <Label className='font-semibold text-sm'>Current Activity Level</Label>
-          <Select
-            value={watchedValues.activityLevel || ''}
-            onValueChange={(value) => setValue('activityLevel', value as any)}
-          >
-            <SelectTrigger className="form-input h-[52px]!">
-              <SelectValue placeholder="Select your activity level" />
-            </SelectTrigger>
-            <SelectContent className="max-h-[300px]">
-              {ACTIVITY_LEVELS.map((level) => (
-                <SelectItem key={level.value} value={level.value} className="py-4 h-[60px] flex items-center">
-                  <div className="space-y-1 w-full">
-                    <div className="font-medium text-sm">{level.label}</div>
-                    <div className="text-xs text-muted-foreground leading-tight">{level.description}</div>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="relative w-full">
+            <Select
+              value={watchedValues.activityLevel || ''}
+              onValueChange={(value) => setValue('activityLevel', value as any)}
+            >
+              <SelectTrigger className="form-input w-full min-h-[52px] h-[52px]">
+                <SelectValue
+                  placeholder="Select your activity level"
+                  className="text-left"
+                />
+              </SelectTrigger>
+              <SelectContent className="max-h-[300px] w-full min-w-0" position="item-aligned">
+                {ACTIVITY_LEVELS.map((level) => (
+                  <SelectItem key={level.value} value={level.value} className="py-4 h-[60px] flex items-center">
+                    <div className="space-y-1 w-full">
+                      <div className="font-medium text-sm">{level.label}</div>
+                      <div className="text-xs text-muted-foreground leading-tight">{level.description}</div>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           {errors.activityLevel && (
             <p className="text-sm text-destructive">{errors.activityLevel.message}</p>
           )}

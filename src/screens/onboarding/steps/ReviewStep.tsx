@@ -62,13 +62,6 @@ export function ReviewStep({}: ReviewStepProps) {
 
   return (
     <div className="space-y-4">
-      <div className="text-center">
-        <div className="text-3xl mb-3">✨</div>
-        <p className="text-sm font-medium text-muted-foreground/80">
-          Review your information before we create your profile.
-        </p>
-      </div>
-
       <Card className="glass p-4 border border-border/50">
         <div className="space-y-3">
           <div className="space-y-2 text-sm">

@@ -23,7 +23,7 @@ export function OnboardingFlow({ isLoading = false }: OnboardingFlowProps) {
   useEffect(() => {
     document.body.classList.add('onboarding-active');
     document.documentElement.classList.add('onboarding-active');
-    
+
     return () => {
       document.body.classList.remove('onboarding-active');
       document.documentElement.classList.remove('onboarding-active');
@@ -54,8 +54,8 @@ export function OnboardingFlow({ isLoading = false }: OnboardingFlowProps) {
     totalSteps,
     isFirstStep,
     isLastStep,
-    currentStepNumber,
     currentStepData,
+    currentStepNumber,
     progress,
     StepComponent,
     setIsSubmitting,
@@ -119,16 +119,13 @@ export function OnboardingFlow({ isLoading = false }: OnboardingFlowProps) {
                 </div>
                 <div>
                   <h1 className="text-xl font-black gradient-text">GYMFLOW</h1>
-                  <p className="text-xs text-muted-foreground font-medium tracking-wide uppercase">
-                    SETUP YOUR PROFILE
-                  </p>
                 </div>
               </div>
 
               <div className="space-y-2">
                 <div className="flex justify-between text-sm text-muted-foreground">
                   <span>Step {currentStepNumber + 1} of {totalSteps}</span>
-                  <span>{Math.round(progress)}% complete</span>
+                  <span>{currentStepData.icon}&nbsp;{currentStepData.title}</span>
                 </div>
                 <Progress value={progress} className="h-2" />
               </div>
@@ -137,10 +134,6 @@ export function OnboardingFlow({ isLoading = false }: OnboardingFlowProps) {
             {/* Step content */}
             <Card className="glass p-6 border border-border/50">
               <div className="space-y-4">
-                <div className="text-center">
-                  <h2 className="text-lg font-bold mb-2">{currentStepData.title}</h2>
-                </div>
-
                 <StepComponent
                   onNext={handleNext}
                   onBack={handleBack}

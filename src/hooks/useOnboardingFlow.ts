@@ -14,11 +14,11 @@ type UseOnboardingFlowProps = {
 };
 
 const STEPS = [
-  { id: "welcome", title: "Welcome to GymFlow", component: WelcomeStep },
-  { id: "personal", title: "Personal Info", component: PersonalInfoStep },
-  { id: "goals", title: "Goals", component: GoalsStep },
-  { id: "experience", title: "Experience", component: ExperienceStep },
-  { id: "review", title: "Review", component: ReviewStep },
+  { id: "welcome", title: "Welcome to GymFlow", component: WelcomeStep, icon: "🔥" },
+  { id: "personal", title: "Personal Info", component: PersonalInfoStep, icon: "👤" },
+  { id: "goals", title: "Goals", component: GoalsStep, icon: "🎯" },
+  { id: "experience", title: "Experience", component: ExperienceStep, icon: "💪" },
+  { id: "review", title: "Review", component: ReviewStep, icon: "👀" },
 ];
 
 const getFieldsForStep = (
