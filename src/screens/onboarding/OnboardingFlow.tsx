@@ -11,6 +11,7 @@ import { onboardingSchema, type OnboardingFormData } from '@/validations/onboard
 import { getConvertedMeasurements } from '../../lib/convert-values';
 import type { UserProfile } from '@/lib/database';
 import { useOnboardingFlow } from '@/hooks/useOnboardingFlow';
+import Logo from '@/components/logo/logo';
 
 type OnboardingFlowProps = {
   isLoading: boolean;
@@ -113,15 +114,9 @@ export function OnboardingFlow({ isLoading = false }: OnboardingFlowProps) {
           <div className="container mx-auto max-w-md p-4 py-8">
             {/* Progress header */}
             <div className="mb-6 text-center">
-              <div className="flex items-center justify-center space-x-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center text-xl">
-                  🔥
-                </div>
-                <div>
-                  <h1 className="text-xl font-black gradient-text">GYMFLOW</h1>
-                </div>
+              <div className="mb-4">
+                <Logo />
               </div>
-
               <div className="space-y-2">
                 <div className="flex justify-between text-sm text-muted-foreground">
                   <span>Step {currentStepNumber + 1} of {totalSteps}</span>

@@ -15,7 +15,10 @@ import {
 import Header from "@/components/header/header"
 import { usePlans } from "@/hooks/usePlans"
 import { useNavigate } from "@tanstack/react-router"
+import { getGreeting, getTodaysFormattedDate } from "@/lib/date-helper"
+import { useCurrentUser } from "@/stores/userStore"
 const Home = () => {
+  const currentUser = useCurrentUser()
   const { getActivePlan } = usePlans();
   const activePlan = getActivePlan();
   const [todayProgress] = useState(0);
@@ -67,26 +70,40 @@ const Home = () => {
     <div>
       <Header />
       <div className="px-4 py-4 space-y-4">
-        <Card className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border-slate-200 dark:border-slate-700">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <Calendar className="h-5 w-5" />
-                  Active Plan
-                </CardTitle>
-                <CardDescription>
-                  {activePlan ? `Following: ${activePlan.name}` : "No active plan selected"}
-                </CardDescription>
-              </div>
-              <Button variant="outline" size="sm" onClick={() => console.log("Manage plans")}>
-                Manage
-              </Button>
+        <div className="flex items-center gap-2 mb-3 mx-1">
+          <div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">
+              {getTodaysFormattedDate()}
             </div>
-          </CardHeader>
+            {currentUser && (
+              <p className="text-base font-semibold text-slate-800 dark:text-white leading-tight">
+                {getGreeting()}, <span className="font-bold">{currentUser.name}</span>!
+              </p>
+            )}
+          </div>
+        </div>
+
+        <Card className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border-slate-200 dark:border-slate-700">
+          {
+            activePlan && (
+              <CardHeader className="pb-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <Calendar className="h-5 w-5" />
+                      Active Plan
+                    </CardTitle>
+                    <CardDescription>
+                      {activePlan ? `Following: ${activePlan.name}` : "No active plan found!"}
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+            )
+          }
           <CardContent>
             {activePlan ? (
-              <div className="space-y-4">
+              <div className="space-y-2">
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium">Today's Progress</span>
@@ -112,11 +129,11 @@ const Home = () => {
                 </div>
               </div>
             ) : (
-              <div className="text-center py-8">
+              <div className="text-center">
                 <Dumbbell className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-                <h3 className="font-medium mb-2">No Active Plan</h3>
+                <h3 className="font-medium mb-2">No Active Plan Found!</h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                  Create or select a workout plan to get started!
+                  Create or select a workout plan to get started.
                 </p>
                 <Button className="px-4!" onClick={handleNavigateToPlans}>
                   Plans

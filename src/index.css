@@ -62,14 +62,14 @@
   /* Light theme - Simple & Clean */
   --background: #ffffff; /* Clean white background */
   --foreground: #000000; /* Pure black text */
-  --card: #f8f8f8; /* Light gray card background */
+  --card: #eeeeee35; /* Light gray card background */
   --card-foreground: #000000; /* Black card text */
   --popover: #ffffff; /* White popover background */
   --popover-foreground: #000000; /* Black popover text */
   
   /* Primary - Bold Red */
-  --primary: #B4121B; /* Bold red - Strong & powerful */
-  --primary-foreground: #ffffff; /* White text on red */
+  --primary: #4D8AE3; /* Bold blue - Strong & powerful */
+  --primary-foreground: #ffffff; /* White text on blue */
   
   /* Secondary - Light Gray */
   --secondary: #f1f1f1; /* Light gray secondary */
@@ -80,16 +80,16 @@
   --muted-foreground: #666666; /* Medium gray text */
   
   /* Accent - Pure Black */
-  --accent: #000000; /* Black accent */
+  --accent: #3BE3A4; /* Black accent */
   --accent-foreground: #ffffff; /* White text on black */
   
   /* Destructive - Same as primary red */
   --destructive: #B4121B; /* Bold red for warnings */
   
   /* Borders & inputs */
-  --border: #cccccc; /* Darker gray border - more visible */
+  --border: #ccccccea; /* Darker gray border - more visible */
   --input: #ffffff; /* White input background */
-  --ring: #B4121B; /* Red focus ring */
+  --ring: #00e0d878; /* Red focus ring */
   
   /* Charts - Simple Red & Black */
   --chart-1: #B4121B; /* Bold red */
@@ -234,15 +234,6 @@
     height: 100vh;
   }
   
-  /* Modern focus states */
-  button:focus-visible,
-  input:focus-visible,
-  select:focus-visible,
-  textarea:focus-visible {
-    @apply ring-2 ring-primary ring-offset-2 ring-offset-background;
-    outline: none;
-  }
-  
   /* Modern number display */
   .workout-number {
     font-family: 'JetBrains Mono', 'SF Mono', Monaco, 'Cascadia Code', monospace;
@@ -279,8 +270,7 @@
 
   /* Form input styles - Visible borders */
   .form-input {
-    border: 2px solid var(--border) !important;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid var(--border) !important;
   }
   
   .form-input:hover {
@@ -289,7 +279,6 @@
   
   .form-input:focus {
     border-color: var(--primary) !important; /* Red focus */
-    box-shadow: 0 0 0 3px rgba(180, 18, 27, 0.1) !important;
   }
   
   .form-switch {
@@ -366,5 +355,7 @@
     min-height: 100vh;
   }
 
-
+  .bg-card {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
 }
