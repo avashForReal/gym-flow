@@ -30,75 +30,50 @@ export interface UserProfile {
   updatedAt: Date;
 }
 
-// Workout-related types (we'll expand these later)
-export interface Exercise {
-  id?: number;
+interface WorkoutPlan {
+  id: number;
   name: string;
-  category: "strength" | "cardio" | "flexibility" | "sports";
-  muscleGroups: string[];
-  equipment?: string;
-  instructions?: string;
-  createdAt: Date;
-}
-
-export interface WorkoutSet {
-  id?: number;
-  exerciseId: number;
-  workoutId: number;
-  setNumber: number;
-  weight?: number; // in kg
-  reps?: number;
-  duration?: number; // in seconds for cardio
-  distance?: number; // in meters for cardio
-  rpe?: number; // Rate of Perceived Exertion (1-10)
-  notes?: string;
-  createdAt: Date;
-}
-
-export interface Workout {
-  id?: number;
-  name?: string;
-  date: Date;
-  duration?: number; // in minutes
-  notes?: string;
-  userId: number;
-  exercises: number[]; // Exercise IDs
+  days: WorkoutPlanDay[];
   createdAt: Date;
   updatedAt: Date;
 }
 
-export interface PersonalRecord {
-  id?: number;
-  userId: number;
-  exerciseId: number;
-  type: "weight" | "reps" | "duration" | "distance";
-  value: number;
-  date: Date;
-  workoutId?: number;
+interface WorkoutPlanDay {
+  id: number;
+  planId: number;
+  dayIndex: number; // 0..6 (7 days)
+  name: string;
+  isRestDay: boolean;
+  exercises: WorkoutPlanExercise[];
   createdAt: Date;
+  updatedAt: Date;
 }
 
-// Database class
+interface WorkoutPlanExercise {
+  id: number;
+  planId: number;
+  dayId: number;
+  exerciseId: string; // from json dataset
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export class GymFlowDatabase extends Dexie {
-  // Tables
   users!: EntityTable<UserProfile, "id">;
-  exercises!: EntityTable<Exercise, "id">;
-  workouts!: EntityTable<Workout, "id">;
-  workoutSets!: EntityTable<WorkoutSet, "id">;
-  personalRecords!: EntityTable<PersonalRecord, "id">;
+  workoutPlans!: EntityTable<WorkoutPlan, "id">;
+  workoutPlanDays!: EntityTable<WorkoutPlanDay, "id">;
+  workoutPlanExercises!: EntityTable<WorkoutPlanExercise, "id">;
 
   constructor() {
     super("GymFlowDB");
 
     this.version(1).stores({
-      users: "++id, name, email, createdAt, updatedAt",
-      exercises: "++id, name, category, muscleGroups, createdAt",
-      workouts: "++id, name, date, userId, createdAt, updatedAt",
-      workoutSets: "++id, exerciseId, workoutId, setNumber, createdAt",
-      personalRecords: "++id, userId, exerciseId, type, value, date, createdAt",
+      users: "++id, name, createdAt, updatedAt",
+      workoutPlans: "++id, name, createdAt, updatedAt",
+      workoutPlanDays: "++id, planId, dayIndex, createdAt, updatedAt",
+      workoutPlanExercises: "++id, planId, dayId, exerciseId, createdAt, updatedAt",
     });
 
-    // Hooks for automatic timestamps
     this.users.hook("creating", function (_primKey, obj, _trans) {
       obj.createdAt = new Date();
       obj.updatedAt = new Date();
@@ -110,35 +85,9 @@ export class GymFlowDatabase extends Dexie {
         (modifications as any).updatedAt = new Date();
       }
     );
-
-    this.workouts.hook("creating", function (_primKey, obj, _trans) {
-      obj.createdAt = new Date();
-      obj.updatedAt = new Date();
-    });
-
-    this.workouts.hook(
-      "updating",
-      function (modifications, _primKey, _obj, _trans) {
-        (modifications as any).updatedAt = new Date();
-      }
-    );
-
-    this.workoutSets.hook("creating", function (_primKey, obj, _trans) {
-      obj.createdAt = new Date();
-    });
-
-    this.personalRecords.hook("creating", function (_primKey, obj, _trans) {
-      obj.createdAt = new Date();
-    });
-
-    this.exercises.hook("creating", function (_primKey, obj, _trans) {
-      obj.createdAt = new Date();
-    });
   }
 
-  // User-related methods (Single user system)
   async getCurrentUser(): Promise<UserProfile | undefined> {
-    // Single user system: get the one and only user profile
     return await this.users.orderBy("id").first();
   }
 
@@ -149,7 +98,6 @@ export class GymFlowDatabase extends Dexie {
   async createUser(
     userData: Omit<UserProfile, "id" | "createdAt" | "updatedAt">
   ): Promise<number> {
-    // Single user system: replace any existing user profile
     await this.users.clear();
 
     const id = await this.users.add(userData as UserProfile);
@@ -168,85 +116,24 @@ export class GymFlowDatabase extends Dexie {
   }
 
   async isFirstTimeUser(): Promise<boolean> {
-    // For single user system, just check if user profile exists
     const user = await this.users.orderBy("id").first();
     return !user;
   }
-
-  // Exercise-related methods (we'll expand these)
-  async getExercisesByCategory(
-    category: Exercise["category"]
-  ): Promise<Exercise[]> {
-    return await this.exercises.where("category").equals(category).toArray();
-  }
-
-  async searchExercises(query: string): Promise<Exercise[]> {
-    return await this.exercises
-      .filter(
-        (exercise) =>
-          exercise.name.toLowerCase().includes(query.toLowerCase()) ||
-          exercise.muscleGroups.some((muscle) =>
-            muscle.toLowerCase().includes(query.toLowerCase())
-          )
-      )
-      .toArray();
-  }
-
-  // Workout-related methods (we'll expand these)
-  async getUserWorkouts(userId: number, limit?: number): Promise<Workout[]> {
-    let query = this.workouts.where("userId").equals(userId).reverse();
-    if (limit) {
-      query = query.limit(limit);
-    }
-    return await query.toArray();
-  }
-
-  async getWorkoutSets(workoutId: number): Promise<WorkoutSet[]> {
-    return await this.workoutSets
-      .where("workoutId")
-      .equals(workoutId)
-      .sortBy("setNumber");
-  }
-
-  // Personal Records methods
-  async getUserPRs(
-    userId: number,
-    exerciseId?: number
-  ): Promise<PersonalRecord[]> {
-    let query = this.personalRecords.where("userId").equals(userId);
-    if (exerciseId) {
-      query = query.and((record) => record.exerciseId === exerciseId);
-    }
-    return await query.reverse().toArray();
-  }
-
-  // Database utilities
+  
   async clearAllData(): Promise<void> {
     await Promise.all([
       this.users.clear(),
-      this.exercises.clear(),
-      this.workouts.clear(),
-      this.workoutSets.clear(),
-      this.personalRecords.clear(),
     ]);
   }
 
   async exportData(): Promise<object> {
-    const [users, exercises, workouts, workoutSets, personalRecords] =
+    const [users] =
       await Promise.all([
         this.users.toArray(),
-        this.exercises.toArray(),
-        this.workouts.toArray(),
-        this.workoutSets.toArray(),
-        this.personalRecords.toArray(),
       ]);
 
     return {
       users,
-      exercises,
-      workouts,
-      workoutSets,
-      personalRecords,
       exportDate: new Date(),
       version: 1,
     };
