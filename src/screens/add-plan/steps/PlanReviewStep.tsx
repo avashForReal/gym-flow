@@ -1,6 +1,5 @@
 import { useFormContext } from 'react-hook-form';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Check, Moon, Zap } from 'lucide-react';
 import type { PlanReviewFormData, WorkoutDay } from '@/validations/workout-plan';
 

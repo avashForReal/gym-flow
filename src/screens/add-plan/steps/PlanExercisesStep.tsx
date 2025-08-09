@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Dumbbell, Search, Plus, X, Calendar } from 'lucide-react';
+import { Dumbbell, Search, Plus, Calendar } from 'lucide-react';
 import type { PlanExercisesFormData, WorkoutDay } from '@/validations/workout-plan';
 import type { Exercise } from '@/data/types';
 import { useCallback, useEffect, useState } from 'react';
@@ -87,18 +87,18 @@ export function PlanExercisesStep({ }: PlanExercisesStepProps) {
     setValue('days', updatedDays, { shouldValidate: true });
   }, [days, setValue]);
 
-  const removeExerciseFromDay = useCallback((dayIndex: number, exerciseId: string) => {
-    const updatedDays = [...days];
-    const day = updatedDays[dayIndex];
+  // const removeExerciseFromDay = useCallback((dayIndex: number, exerciseId: string) => {
+  //   const updatedDays = [...days];
+  //   const day = updatedDays[dayIndex];
     
-    updatedDays[dayIndex] = {
-      ...day,
-      exercises: day.exercises.filter(ex => ex.exerciseId !== exerciseId),
-      isRestDay: day.exercises.length === 1 ? true : day.isRestDay
-    };
+  //   updatedDays[dayIndex] = {
+  //     ...day,
+  //     exercises: day.exercises.filter(ex => ex.exerciseId !== exerciseId),
+  //     isRestDay: day.exercises.length === 1 ? true : day.isRestDay
+  //   };
     
-    setValue('days', updatedDays, { shouldValidate: true });
-  }, [days, setValue]);
+  //   setValue('days', updatedDays, { shouldValidate: true });
+  // }, [days, setValue]);
 
   const getDisplayName = (day: WorkoutDay) => {
     if (day.customName) {
@@ -181,7 +181,7 @@ export function PlanExercisesStep({ }: PlanExercisesStepProps) {
           </div>
 
           {/* Current Day Exercises */}
-          {days[selectedDayIndex].exercises.length > 0 && (
+          {/* {days[selectedDayIndex].exercises.length > 0 && (
             <div className="p-4 border-b border-border">
               <h3 className="font-medium mb-3">Added Exercises</h3>
               <div className="space-y-2">
@@ -209,7 +209,7 @@ export function PlanExercisesStep({ }: PlanExercisesStepProps) {
                 ))}
               </div>
             </div>
-          )}
+          )} */}
 
           {/* Exercise Results */}
           <div className="flex-1 overflow-y-auto p-4">

@@ -3,9 +3,7 @@ import { routeTree } from './routeTree.gen'
 import { useCurrentUser, useInitializeUser, useIsFirstTimeUser, useIsLoading } from "@/stores/userStore"
 import { useEffect } from "react"
 import { OnboardingFlow } from "./screens/onboarding/OnboardingFlow"
-import { PWAInstallPrompt } from "@/components/ui/pwa-install-prompt"
-import { PWAUpdateNotification } from "@/components/ui/pwa-update-notification"
-import { ManualInstallButton } from "@/components/ui/manual-install-button"
+
 
 // Create a new router instance
 const router = createRouter({ routeTree })
@@ -29,24 +27,10 @@ function App() {
 
   // Show onboarding for first-time users
   if (isFirstTimeUser || !currentUser) {
-    return (
-      <>
-        <OnboardingFlow isLoading={isLoading} />
-        <PWAInstallPrompt />
-        <PWAUpdateNotification />
-        <ManualInstallButton />
-      </>
-    )
+    return <OnboardingFlow isLoading={isLoading} />
   }
 
-  return (
-    <>
-      <RouterProvider router={router} />
-      <PWAInstallPrompt />
-      <PWAUpdateNotification />
-      <ManualInstallButton />
-    </>
-  )
+  return <RouterProvider router={router} />
 }
 
 export default App
