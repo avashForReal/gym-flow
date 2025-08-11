@@ -45,51 +45,78 @@ export function PlanScheduleStep({ }: PlanScheduleStepProps) {
   };
 
   return (
-    <div className="space-y-3 px-1">
-      <div className="space-y-2">
-        {days.map((day) => (
-          <Card key={day.dayIndex} className="p-2">
-            <div className="flex items-center justify-between mb-1">
-              <div className="flex items-center gap-2">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${day.isRestDay
-                  ? 'bg-muted text-muted-foreground'
-                  : 'bg-primary text-primary-foreground'
-                  }`}>
+    <div className="space-y-2 px-1">
+      <div className="flex flex-col gap-6 ml-2">
+        {days.map((day) => {
+          const isRest = day.isRestDay;
+          return (
+            <Card
+              key={day.dayIndex}
+              className={`!gap-2 relative flex flex-row items-center px-3 py-2 rounded-lg shadow-sm border transition-colors min-w-0 w-full
+                ${isRest
+                  ? "bg-muted/80 border-dashed border-muted-foreground/30 opacity-80"
+                  : "bg-background border-primary/30"
+                }
+              `}
+            >
+              <div className="absolute -left-4 -top-4 flex flex-col items-center justify-center mr-3">
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold mb-1
+                    ${isRest
+                      ? "bg-muted text-muted-foreground border border-muted-foreground/30"
+                      : "bg-primary text-primary-foreground border border-primary/60"
+                    }
+                  `}
+                >
                   {day.dayIndex + 1}
                 </div>
-                <div>
-                  <span className="font-medium text-sm">{getDisplayName(day)}</span>
-                  <span className="block text-[0.7rem] text-muted-foreground">
-                    {day.isRestDay ? 'Rest Day' : `${day.exercises.length} ex`}
+              </div>
+
+              <div className="flex flex-col items-center justify-center mr-3">
+                <span className="text-lg" aria-label={isRest ? "Rest" : "Workout"}>
+                  {isRest ? "😴" : "🏋️"}
+                </span>
+              </div>
+
+              {/* Main info */}
+              <div className="flex-1 min-w-0 flex flex-col justify-center">
+                <div className="flex items-center gap-2">
+                  <span className={`font-semibold text-sm truncate ${isRest ? "text-muted-foreground" : ""}`}>
+                    {getDisplayName(day)}
                   </span>
                 </div>
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="text-lg" aria-label={day.isRestDay ? "Rest" : "Workout"}>
-                  {day.isRestDay ? "😴" : "🏋️"}
+                <span className={`block italic font-semibold text-[0.7rem] ${isRest ? "text-muted-foreground/70" : "text-primary/70"}`}>
+                  {isRest ? "Rest Day" : `${day.exercises.length} exercise${day.exercises.length === 1 ? "" : "s"}`}
                 </span>
-                <Switch
-                  checked={day.isRestDay}
-                  onCheckedChange={() => toggleRestDay(day.dayIndex)}
-                  className="form-switch scale-90"
+                <Input
+                  placeholder="Custom name (e.g. Push day)"
+                  value={day.customName ?? ''}
+                  disabled={isRest}
+                  onChange={(e) => updateDayName(day.dayIndex, e.target.value)}
+                  className={`h-7 mt-1 px-2 py-1 rounded border max-w-xs
+                    ${isRest
+                      ? "bg-muted text-muted-foreground border-muted-foreground/20 opacity-70"
+                      : "bg-background border-primary/20"
+                    }
+                  `}
+                  inputMode="text"
+                  autoComplete="off"
+                  maxLength={24}
                 />
               </div>
-            </div>
-            <Input
-              placeholder="Custom name (e.g. Push day)"
-              value={day.customName ?? ''}
-              disabled={day.isRestDay}
-              onChange={(e) => updateDayName(day.dayIndex, e.target.value)}
-              className="h-8 text-base form-input mt-1"
-              inputMode="text"
-              autoComplete="off"
-            />
-          </Card>
-        ))}
+
+              <Switch
+                checked={isRest}
+                onCheckedChange={() => toggleRestDay(day.dayIndex)}
+                className="form-switch scale-90"
+              />
+            </Card>
+          );
+        })}
       </div>
 
       {errors.days && (
-        <p className="text-xs text-destructive">{errors.days.message}</p>
+        <p className="text-xs text-destructive mt-1">{errors.days.message}</p>
       )}
     </div>
   );

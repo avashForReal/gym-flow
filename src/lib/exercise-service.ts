@@ -197,16 +197,14 @@ class ExerciseService {
    */
   async getFilterOptions(): Promise<{
     bodyParts: string[];
-    equipment: string[];
     muscles: string[];
   }> {
     await this.initialize();
 
     const bodyParts = [...new Set(this.exercises.flatMap(e => e.bodyParts))].sort();
-    const equipment = [...new Set(this.exercises.flatMap(e => e.equipments))].sort();
     const muscles = [...new Set(this.exercises.flatMap(e => [...e.targetMuscles, ...e.secondaryMuscles]))].sort();
 
-    return { bodyParts, equipment, muscles };
+    return { bodyParts, muscles };
   }
 
   private applyFilters(exercises: ExerciseData[], options: ExerciseSearchOptions): ExerciseData[] {
