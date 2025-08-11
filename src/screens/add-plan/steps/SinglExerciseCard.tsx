@@ -1,28 +1,32 @@
+import ExerciseGif from "@/components/exercise-gif/exercise-gif";
 import ExerciseDetailsModal from "@/components/ExerciseDetailsModal";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import type { Exercise } from "@/data/types";
-import { Plus, Info, Target, Users } from "lucide-react";
+import { capitalizeFirst } from "@/lib/string-helper";
+import { Eye } from "lucide-react";
 import { useState } from "react";
 
 type SinglExerciseCardProps = {
     exercise: Exercise;
-    onAddToDay?: () => void;
-    showAddButton?: boolean;
+    onAddToDay: () => void;
+    onRemoveFromDay: () => void;
+    isSelected: boolean
 }
 
 const SinglExerciseCard = ({
     exercise,
     onAddToDay,
-    showAddButton = true
+    onRemoveFromDay,
+    isSelected
 }: SinglExerciseCardProps) => {
     const [showDetailsModal, setShowDetailsModal] = useState(false);
 
-    const handleAddToDay = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (onAddToDay) {
+    const handleClick = () => {
+        if (!isSelected) {
             onAddToDay();
+        } else {
+            onRemoveFromDay();
         }
     };
 
@@ -33,123 +37,128 @@ const SinglExerciseCard = ({
 
     return (
         <>
-            <Card className="p-0 hover:shadow-md transition-all duration-200 border-2 hover:border-primary/20 hover:bg-primary/5 overflow-hidden">
-                <div className="flex gap-3 p-3">
-                    {/* Exercise GIF Thumbnail */}
-                    <div className="flex-shrink-0">
-                        <div className="w-16 h-16 bg-muted rounded-lg overflow-hidden">
-                            <img
-                                src={exercise.gifUrl}
-                                alt={`${exercise.name} demonstration`}
-                                className="w-full h-full object-cover"
-                                loading="lazy"
-                                onError={(e) => {
-                                    const target = e.target as HTMLImageElement;
-                                    target.style.display = 'none';
-                                    const parent = target.parentElement;
-                                    if (parent) {
-                                        parent.innerHTML = `
-                                            <div class="flex items-center justify-center h-full">
-                                                <svg class="h-6 w-6 text-muted-foreground opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                    <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
-                                                    <circle cx="9" cy="9" r="2"/>
-                                                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
-                                                </svg>
-                                            </div>
-                                        `;
-                                    }
-                                }}
-                            />
+            <Card
+                onClick={handleClick}
+                className={`!py-2 group relative overflow-hidden border bg-white hover:shadow-sm transition-all duration-200 rounded-xl cursor-pointer
+                    ${isSelected
+                        ? "border-2 border-blue-500 shadow-[0_0_0_2px_rgba(59,130,246,0.15)]"
+                        : "border-gray-200"
+                    }
+                `}
+                style={isSelected ? { boxShadow: "0 0 0 2px rgba(59,130,246,0.15)" } : undefined}
+            >
+                <div className="p-2">
+                    <div className="flex items-center gap-4">
+                        {/* Exercise Thumbnail - Smaller */}
+                        <div className="flex-shrink-0">
+                            <div className="relative">
+                                <ExerciseGif
+                                    gifUrl={exercise.gifUrl}
+                                    name={exercise.name}
+                                    twClassName="w-9 h-9 rounded border border-gray-100 shadow-sm"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent rounded pointer-events-none" />
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Exercise Info */}
-                    <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-sm mb-2 line-clamp-2 leading-tight">{exercise.name}</h3>
-                        
-                        {/* Primary Target Muscles */}
-                        {exercise.targetMuscles && exercise.targetMuscles.length > 0 && (
-                            <div className="mb-2">
-                                <div className="flex items-center gap-1 mb-1">
-                                    <Target className="h-3 w-3 text-red-600" />
-                                    <span className="text-xs font-medium text-muted-foreground">Primary:</span>
-                                </div>
-                                <div className="flex flex-wrap gap-1">
-                                    {exercise.targetMuscles.slice(0, 2).map((muscle, index) => (
-                                        <Badge key={index} variant="secondary" className="text-xs px-1.5 py-0.5 bg-red-50 text-red-700 border-red-200">
-                                            {muscle}
-                                        </Badge>
-                                    ))}
-                                    {exercise.targetMuscles.length > 2 && (
-                                        <Badge variant="outline" className="text-xs px-1.5 py-0.5 text-muted-foreground">
-                                            +{exercise.targetMuscles.length - 2}
-                                        </Badge>
+                        {/* Main Content Area */}
+                        <div className="flex-1 min-w-0">
+                            {/* Header with title and actions */}
+                            <div className="flex items-start justify-between mb-1.5">
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="font-bold text-gray-900 text-xs leading-tight truncate mb-0.5" title={exercise.name}>
+                                        {capitalizeFirst(exercise.name)}
+                                    </h3>
+                                    {/* Equipment info as subtitle */}
+                                    {exercise.equipments && exercise.equipments.length > 0 && (
+                                        <p className="font-semibold text-xs text-gray-500 truncate">
+                                            {exercise.equipments.slice(0, 2).map(capitalizeFirst).join(', ')}
+                                            {exercise.equipments.length > 2 && ` +${exercise.equipments.length - 2} more`}
+                                        </p>
                                     )}
                                 </div>
-                            </div>
-                        )}
 
-                        {/* Secondary Muscles */}
-                        {exercise.secondaryMuscles && exercise.secondaryMuscles.length > 0 && (
-                            <div className="mb-2">
-                                <div className="flex items-center gap-1 mb-1">
-                                    <Users className="h-3 w-3 text-orange-600" />
-                                    <span className="text-xs font-medium text-muted-foreground">Secondary:</span>
-                                </div>
-                                <div className="flex flex-wrap gap-1">
-                                    {[...new Set(exercise.secondaryMuscles)].slice(0, 2).map((muscle, index) => (
-                                        <Badge key={index} variant="outline" className="text-xs px-1.5 py-0.5 bg-orange-50 text-orange-700 border-orange-200">
-                                            {muscle}
-                                        </Badge>
-                                    ))}
-                                    {[...new Set(exercise.secondaryMuscles)].length > 2 && (
-                                        <Badge variant="outline" className="text-xs px-1.5 py-0.5 text-muted-foreground">
-                                            +{[...new Set(exercise.secondaryMuscles)].length - 2}
-                                        </Badge>
-                                    )}
+                                {/* Action buttons - horizontal layout, more subtle */}
+                                <div className="flex items-center gap-0.5 ml-2 opacity-60 group-hover:opacity-100 transition-opacity">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={handleShowDetails}
+                                        className="text-blue-700 hover:text-gray-600 hover:bg-gray-100 rounded"
+                                        title="View Details"
+                                    >
+                                        <Eye className="!h-4 !w-4" />
+                                    </Button>
+                                    {/* <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={handleAddToDay}
+                                        className="h-6 w-6 p-0 text-blue-500 hover:text-blue-600 hover:bg-blue-50 rounded"
+                                        title="Add to Day"
+                                    >
+                                        <Plus className="h-3 w-3" />
+                                    </Button> */}
                                 </div>
                             </div>
-                        )}
 
-                        {/* Body Parts */}
-                        <div>
-                            <div className="flex flex-wrap gap-1">
-                                {exercise.bodyParts.slice(0, 2).map(part => (
-                                    <Badge key={part} variant="secondary" className="text-xs px-1.5 py-0.5 bg-green-50 text-green-700 border-green-200">
-                                        {part}
-                                    </Badge>
-                                ))}
-                                {exercise.bodyParts.length > 2 && (
-                                    <Badge variant="outline" className="text-xs px-1.5 py-0.5 text-muted-foreground">
-                                        +{exercise.bodyParts.length - 2}
-                                    </Badge>
+                            {/* Muscle Groups - Clean chip design */}
+                            <div className="space-y-1">
+                                {/* Body parts - minimal, clean */}
+                                <div className="flex items-center gap-1">
+                                    <span className="text-[10px] font-medium text-gray-500 w-12 flex-shrink-0">Targets</span>
+                                    <div className="flex flex-wrap gap-0.5">
+                                        {exercise.bodyParts.slice(0, 3).map(part => (
+                                            <span key={part} className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] bg-gray-100 text-gray-700">
+                                                {capitalizeFirst(part)}
+                                            </span>
+                                        ))}
+                                        {exercise.bodyParts.length > 3 && (
+                                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] text-gray-500 bg-gray-50">
+                                                +{exercise.bodyParts.length - 3}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Primary muscles */}
+                                {exercise.targetMuscles && exercise.targetMuscles.length > 0 && (
+                                    <div className="flex items-center gap-1">
+                                        <span className="text-[10px] font-medium text-gray-500 w-12 flex-shrink-0">Primary</span>
+                                        <div className="flex flex-wrap gap-0.5">
+                                            {exercise.targetMuscles.slice(0, 2).map((muscle, index) => (
+                                                <span key={index} className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-red-50 text-red-700 border border-red-100">
+                                                    {capitalizeFirst(muscle)}
+                                                </span>
+                                            ))}
+                                            {exercise.targetMuscles.length > 2 && (
+                                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] text-gray-500 bg-gray-50">
+                                                    +{exercise.targetMuscles.length - 2}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Secondary muscles */}
+                                {exercise.secondaryMuscles && exercise.secondaryMuscles.length > 0 && (
+                                    <div className="flex items-center gap-1">
+                                        <span className="text-[10px] font-medium text-gray-500 w-12 flex-shrink-0">Support</span>
+                                        <div className="flex flex-wrap gap-0.5">
+                                            {[...new Set(exercise.secondaryMuscles)].slice(0, 2).map((muscle, index) => (
+                                                <span key={index} className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-orange-50 text-orange-700 border border-orange-100">
+                                                    {capitalizeFirst(muscle)}
+                                                </span>
+                                            ))}
+                                            {[...new Set(exercise.secondaryMuscles)].length > 2 && (
+                                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] text-gray-500 bg-gray-50">
+                                                    +{[...new Set(exercise.secondaryMuscles)].length - 2}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
                                 )}
                             </div>
                         </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex flex-col gap-1 flex-shrink-0">
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={handleShowDetails}
-                            className="h-8 w-8 p-0 text-muted-foreground hover:text-primary hover:bg-primary/10"
-                            title="View Details"
-                        >
-                            <Info className="h-4 w-4" />
-                        </Button>
-                        {showAddButton && (
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={handleAddToDay}
-                                className="h-8 w-8 p-0 text-primary hover:text-primary hover:bg-primary/10"
-                                title="Add to Day"
-                            >
-                                <Plus className="h-4 w-4" />
-                            </Button>
-                        )}
                     </div>
                 </div>
             </Card>
@@ -160,7 +169,7 @@ const SinglExerciseCard = ({
                 isOpen={showDetailsModal}
                 onClose={() => setShowDetailsModal(false)}
                 onAddToDay={onAddToDay}
-                showAddButton={showAddButton}
+                showAddButton={true}
             />
         </>
     )

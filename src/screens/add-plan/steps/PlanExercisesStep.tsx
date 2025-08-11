@@ -167,8 +167,9 @@ export function PlanExercisesStep({ }: PlanExercisesStepProps) {
       {isFilterDrawerOpen && (
         <ExerciseFilterDrawer
           setIsFilterDrawerOpen={setIsFilterDrawerOpen}
-          selectedDayName={getDisplayName(days[selectedDayIndex!])}
+          selectedDay={days[selectedDayIndex!]}
           onAddExercise={(exercise) => addExerciseToDay(selectedDayIndex!, exercise)}
+          onRemoveExercise={(exercise) => removeExerciseFromDay(selectedDayIndex!, exercise.exerciseId)}
         />
       )}
     </div>

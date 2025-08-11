@@ -6,17 +6,21 @@ import { Dumbbell, Filter, Search, X } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import SinglExerciseCard from "./SinglExerciseCard";
 import type { Exercise } from "@/data/types";
+import type { PlanExercisesFormData } from "@/validations/workout-plan";
+import { capitalizeFirst } from "@/lib/string-helper";
 
 type ExerciseFilterDrawerProps = {
     setIsFilterDrawerOpen: (val: boolean) => void
-    selectedDayName: string
-    onAddExercise?: (exercise: Exercise) => void
+    onAddExercise: (exercise: Exercise) => void
+    onRemoveExercise: (exercise: Exercise) => void
+    selectedDay: PlanExercisesFormData['days'][number]
 }
 
 const ExerciseFilterDrawer = ({
     setIsFilterDrawerOpen,
-    selectedDayName,
-    onAddExercise
+    onAddExercise,
+    onRemoveExercise,
+    selectedDay
 }: ExerciseFilterDrawerProps) => {
     const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
     const [exerciseSearchQuery, setExerciseSearchQuery] = useState('');
@@ -42,14 +46,15 @@ const ExerciseFilterDrawer = ({
         )
     }, [exerciseSearchQuery, selectedBodyPart, selectedMuscle])
 
-    const hasActiveFilters = useMemo(() => totalActiveFilters > 0, [totalActiveFilters])
+    const hasActiveFilters = useMemo(() => totalActiveFilters > 0, [totalActiveFilters]);
+    const selectedDayExercises = useMemo(() => selectedDay.exercises, [selectedDay])
 
     return (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-end">
             <div className="bg-background w-full h-[80vh] rounded-t-xl overflow-hidden flex flex-col">
                 {/* Modal Header - Fixed */}
                 <div className="flex items-center justify-between px-4 py-2 border-b border-primary/20 flex-shrink-0">
-                    <h3 className="text-base font-semibold text-gray-800">Add Exercise to {selectedDayName}</h3>
+                    <h3 className="text-base font-semibold text-gray-800">Add Exercise to {selectedDay.name}</h3>
                     <Button
                         variant="ghost"
                         size="icon"
@@ -112,13 +117,13 @@ const ExerciseFilterDrawer = ({
                                 {selectedBodyPart && (
                                     <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5 bg-green-100 text-green-800 border-green-200">
                                         <span className="mr-0.5">🏃</span>
-                                        {selectedBodyPart}
+                                        {capitalizeFirst(selectedBodyPart)}
                                     </Badge>
                                 )}
                                 {selectedMuscle && (
                                     <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5 bg-purple-100 text-purple-800 border-purple-200">
                                         <span className="mr-0.5">💪</span>
-                                        {selectedMuscle}
+                                        {capitalizeFirst(selectedMuscle)}
                                     </Badge>
                                 )}
                             </div>
@@ -164,7 +169,7 @@ const ExerciseFilterDrawer = ({
                                                 onClick={() => setSelectedBodyPart(part)}
                                                 className="flex-shrink-0 h-6 px-2 text-[10px] font-medium whitespace-nowrap"
                                             >
-                                                {part}
+                                                {capitalizeFirst(part)}
                                             </Button>
                                         ))}
                                     </div>
@@ -202,7 +207,7 @@ const ExerciseFilterDrawer = ({
                                                 onClick={() => setSelectedMuscle(muscle)}
                                                 className="flex-shrink-0 h-6 px-2 text-[10px] font-medium whitespace-nowrap"
                                             >
-                                                {muscle}
+                                                {capitalizeFirst(muscle)}
                                             </Button>
                                         ))}
                                     </div>
@@ -233,20 +238,23 @@ const ExerciseFilterDrawer = ({
 
                             {!isLoadingExercises && exercises.length > 0 && (
                                 <div className="p-4 space-y-3">
-                                    {exercises.map((exercise) => (
-                                        <SinglExerciseCard 
-                                            exercise={exercise} 
-                                            key={exercise.exerciseId}
-                                            onAddToDay={() => {
-                                                if (onAddExercise) {
+                                    {exercises.map((exercise) => {
+                                        const isSelected = selectedDayExercises.some((ex) => ex.exerciseId === exercise.exerciseId);
+                                        return (
+                                            <SinglExerciseCard
+                                                exercise={exercise}
+                                                key={exercise.exerciseId}
+                                                onAddToDay={() => {
                                                     onAddExercise(exercise);
-                                                    setIsFilterDrawerOpen(false);
-                                                    clearAllFilters();
-                                                }
-                                            }}
-                                            showAddButton={!!onAddExercise}
-                                        />
-                                    ))}
+                                                }}
+                                                onRemoveFromDay={() => {
+                                                    onRemoveExercise(exercise);
+                                                }}
+                                                isSelected={isSelected}
+
+                                            />
+                                        )
+                                    })}
                                 </div>
                             )}
 
