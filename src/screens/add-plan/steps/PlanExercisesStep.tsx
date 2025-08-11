@@ -168,6 +168,7 @@ export function PlanExercisesStep({ }: PlanExercisesStepProps) {
         <ExerciseFilterDrawer
           setIsFilterDrawerOpen={setIsFilterDrawerOpen}
           selectedDayName={getDisplayName(days[selectedDayIndex!])}
+          onAddExercise={(exercise) => addExerciseToDay(selectedDayIndex!, exercise)}
         />
       )}
     </div>

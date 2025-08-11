@@ -5,15 +5,18 @@ import { useExercises } from "@/hooks/useExercises";
 import { Dumbbell, Filter, Search, X } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import SinglExerciseCard from "./SinglExerciseCard";
+import type { Exercise } from "@/data/types";
 
 type ExerciseFilterDrawerProps = {
     setIsFilterDrawerOpen: (val: boolean) => void
     selectedDayName: string
+    onAddExercise?: (exercise: Exercise) => void
 }
 
 const ExerciseFilterDrawer = ({
     setIsFilterDrawerOpen,
-    selectedDayName
+    selectedDayName,
+    onAddExercise
 }: ExerciseFilterDrawerProps) => {
     const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
     const [exerciseSearchQuery, setExerciseSearchQuery] = useState('');
@@ -231,7 +234,18 @@ const ExerciseFilterDrawer = ({
                             {!isLoadingExercises && exercises.length > 0 && (
                                 <div className="p-4 space-y-3">
                                     {exercises.map((exercise) => (
-                                        <SinglExerciseCard exercise={exercise} key={exercise.exerciseId} />
+                                        <SinglExerciseCard 
+                                            exercise={exercise} 
+                                            key={exercise.exerciseId}
+                                            onAddToDay={() => {
+                                                if (onAddExercise) {
+                                                    onAddExercise(exercise);
+                                                    setIsFilterDrawerOpen(false);
+                                                    clearAllFilters();
+                                                }
+                                            }}
+                                            showAddButton={!!onAddExercise}
+                                        />
                                     ))}
                                 </div>
                             )}
