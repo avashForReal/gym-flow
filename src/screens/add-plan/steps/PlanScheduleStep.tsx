@@ -2,7 +2,6 @@ import { useFormContext } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { Calendar } from 'lucide-react';
 import type { PlanScheduleFormData, WorkoutDay } from '@/validations/workout-plan';
 import { useCallback } from 'react';
 
@@ -46,57 +45,42 @@ export function PlanScheduleStep({ }: PlanScheduleStepProps) {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Calendar className="h-8 w-8 text-primary" />
-        </div>
-        <h2 className="text-xl font-bold mb-2">Plan your weekly schedule</h2>
-        <p className="text-muted-foreground text-sm">
-          Customize each day and mark rest days
-        </p>
-      </div>
-
-      <div className="space-y-3">
+    <div className="space-y-3 px-1">
+      <div className="space-y-2">
         {days.map((day) => (
-          <Card key={day.dayIndex} className="p-4">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${day.isRestDay
-                    ? 'bg-muted text-muted-foreground'
-                    : 'bg-primary text-primary-foreground'
+          <Card key={day.dayIndex} className="p-2">
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-2">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${day.isRestDay
+                  ? 'bg-muted text-muted-foreground'
+                  : 'bg-primary text-primary-foreground'
                   }`}>
                   {day.dayIndex + 1}
                 </div>
                 <div>
-                  <p className="font-medium">{getDisplayName(day)}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {day.isRestDay ? 'Rest Day' : `${day.exercises.length} exercises`}
-                  </p>
+                  <span className="font-medium text-sm">{getDisplayName(day)}</span>
+                  <span className="block text-[0.7rem] text-muted-foreground">
+                    {day.isRestDay ? 'Rest Day' : `${day.exercises.length} ex`}
+                  </span>
                 </div>
               </div>
-
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <div className="h-4 w-4 text-muted-foreground mb-2" >
-                    {
-                      day.isRestDay ? (<>😴</>) : (<>🏋️</>)
-                    }
-                  </div>
-                  <Switch
-                    checked={day.isRestDay}
-                    onCheckedChange={() => toggleRestDay(day.dayIndex)}
-                    className='form-switch'
-                  />
-                </div>
+              <div className="flex items-center gap-1">
+                <span className="text-lg" aria-label={day.isRestDay ? "Rest" : "Workout"}>
+                  {day.isRestDay ? "😴" : "🏋️"}
+                </span>
+                <Switch
+                  checked={day.isRestDay}
+                  onCheckedChange={() => toggleRestDay(day.dayIndex)}
+                  className="form-switch scale-90"
+                />
               </div>
             </div>
             <Input
-              placeholder="Add custom name (e.g., Push Day, Legs)..."
+              placeholder="Custom name (e.g. Push day)"
               value={day.customName ?? ''}
               disabled={day.isRestDay}
               onChange={(e) => updateDayName(day.dayIndex, e.target.value)}
-              className="h-10 text-sm form-input"
+              className="h-8 text-base form-input mt-1"
               inputMode="text"
               autoComplete="off"
             />
@@ -105,7 +89,7 @@ export function PlanScheduleStep({ }: PlanScheduleStepProps) {
       </div>
 
       {errors.days && (
-        <p className="text-sm text-destructive">{errors.days.message}</p>
+        <p className="text-xs text-destructive">{errors.days.message}</p>
       )}
     </div>
   );

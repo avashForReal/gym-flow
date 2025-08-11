@@ -35,7 +35,6 @@ export function AddPlanWizard() {
     isLastStep,
     currentStepNumber,
     currentStepData,
-    progress,
     StepComponent,
     setIsSubmitting,
     handleNext,
@@ -70,16 +69,13 @@ export function AddPlanWizard() {
     <FormProvider {...form}>
       <div className="h-screen bg-background">
         <AddPlanHeader
-          isFirstStep={isFirstStep}
-          handleBack={handleBack}
           currentStepData={currentStepData}
           currentStepNumber={currentStepNumber}
           totalSteps={totalSteps}
-          progress={progress}
           handleCancel={handleCancel}
         />
 
-        <div className="pt-[5rem] pb-20 h-full overflow-y-auto w-full">
+        <div className="pt-[4rem] pb-[10rem] h-full overflow-y-auto w-full">
           <div className="p-4">
             <StepComponent
               onNext={handleNext}
@@ -92,6 +88,8 @@ export function AddPlanWizard() {
 
         {/* Footer - fixed at bottom above navigation */}
         <AddPlanFooter
+          isFirstStep={isFirstStep}
+          handleBack={handleBack}
           isLastStep={isLastStep}
           handleSubmit={handleSubmit}
           onSubmit={onSubmit}

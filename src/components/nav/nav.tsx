@@ -3,7 +3,7 @@ import { Activity, Calendar, Home } from "lucide-react"
 
 const Nav = () => {
     return (
-        <div className="h-14 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-700">
+        <div className="h-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-700">
             <div className="flex items-center justify-around pt-2 pb-4 px-2">
                 <Link
                     to="/"

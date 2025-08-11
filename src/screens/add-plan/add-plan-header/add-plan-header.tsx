@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import {
     AlertDialog,
     AlertDialogTrigger,
@@ -15,43 +14,35 @@ import {
 } from '@/components/ui/alert-dialog';
 
 interface AddPlanHeaderProps {
-    isFirstStep: boolean
-    handleBack: () => void
     handleCancel: () => void
     currentStepData: any
     currentStepNumber: number
     totalSteps: number
-    progress: number
 }
 
 const AddPlanHeader = ({
-    isFirstStep,
-    handleBack,
     handleCancel,
     currentStepData,
     currentStepNumber,
     totalSteps,
-    progress
 }: AddPlanHeaderProps) => {
     const [open, setOpen] = useState(false);
+    const Icon = currentStepData.icon;
 
     return (
         <div className="fixed top-0 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-border z-20">
-            <div className="flex items-center px-2 py-2">
-                {!isFirstStep ? (
-                    <Button variant="ghost" size="icon" onClick={handleBack} className="h-8 w-8 p-0">
-                        <ArrowLeft className="h-4 w-4" />
-                    </Button>
-                ) : (
-                    <div className="h-8 w-8" />
-                )}
-                <div className="flex-1 flex flex-col items-center mx-2">
-                    <h1 className="font-bold text-sm">{currentStepData.title}</h1>
-                    <span className="text-xs text-muted-foreground mt-0.5">
-                        Step {currentStepNumber + 1} of {totalSteps}
-                    </span>
-                    <Progress value={progress} className="h-1 mt-1 w-24" />
+            <div className="flex items-center justify-between px-2 py-2">
+                <div className="flex items-center gap-2 ml-4">
+                    <div><Icon className="w-8 h-8 text-primary bg-primary/10 p-2 rounded-sm" /></div>
+                    <div className="flex-1 flex flex-col items-start mx-2">
+                        <h1 className="font-bold text-sm flex items-center gap-1">{currentStepData.title}</h1>
+                        <span className="text-xs text-muted-foreground mt-0.5">
+                            Step {currentStepNumber + 1} of {totalSteps}
+                        </span>
+                    </div>
                 </div>
+
+
                 <AlertDialog open={open} onOpenChange={setOpen}>
                     <AlertDialogTrigger asChild>
                         <Button
@@ -60,7 +51,7 @@ const AddPlanHeader = ({
                             className="h-8 w-8 p-0"
                             onClick={() => setOpen(true)}
                         >
-                            <X className="h-4 w-4" />
+                            <X className="!h-4 !w-4" />
                         </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>

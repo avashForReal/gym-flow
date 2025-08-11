@@ -7,16 +7,17 @@ import {
 } from "@/screens/add-plan/steps";
 import type { WorkoutPlanFormData } from "@/validations/workout-plan";
 import type { UseFormReturn } from "react-hook-form";
+import { Calendar, Check, Dumbbell, Info } from "lucide-react";
 
 type UseWorkoutPlanWizardProps = {
   form: UseFormReturn<WorkoutPlanFormData>;
 };
 
 const STEPS = [
-  { id: "basics", title: "Plan Details", component: PlanBasicsStep },
-  { id: "schedule", title: "Plan Schedule", component: PlanScheduleStep },
-  { id: "exercises", title: "Add Exercises", component: PlanExercisesStep },
-  { id: "review", title: "Review & Save", component: PlanReviewStep },
+  { id: "basics", title: "Plan Details", component: PlanBasicsStep, icon: Info },
+  { id: "schedule", title: "Plan Your Week", component: PlanScheduleStep, icon: Calendar },
+  { id: "exercises", title: "Add Exercises", component: PlanExercisesStep, icon: Dumbbell },
+  { id: "review", title: "Review & Save", component: PlanReviewStep, icon: Check },
 ];
 
 const getFieldsForStep = (
