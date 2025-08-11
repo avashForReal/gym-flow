@@ -1,12 +1,11 @@
 import { useFormContext } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Dumbbell, Plus, X } from 'lucide-react';
+import { Dumbbell, Plus } from 'lucide-react';
 import type { PlanExercisesFormData, WorkoutDay } from '@/validations/workout-plan';
 import type { Exercise } from '@/data/types';
 import { useCallback, useState } from 'react';
 import ExerciseFilterDrawer from './ExerciseFilterDrawer';
+import SinglExerciseCard from './SinglExerciseCard';
 
 interface PlanExercisesStepProps {
   onNext: () => void;
@@ -111,34 +110,15 @@ export function PlanExercisesStep({ }: PlanExercisesStepProps) {
                       if (!exercise) return null;
 
                       return (
-                        <Card key={exerciseRef.exerciseId} className="p-3">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1 min-w-0">
-                              <h4 className="font-medium text-sm mb-1">{exercise.name}</h4>
-                              <div className="flex flex-wrap gap-1">
-                                {exercise.bodyParts.slice(0, 3).map(part => (
-                                  <Badge key={part} variant="secondary" className="text-xs px-2 py-1">
-                                    {part}
-                                  </Badge>
-                                ))}
-                                {exercise.bodyParts.length > 3 && (
-                                  <Badge variant="outline" className="text-xs px-2 py-1">
-                                    +{exercise.bodyParts.length - 3}
-                                  </Badge>
-                                )}
-                              </div>
-                            </div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => removeExerciseFromDay(selectedDayIndex, exerciseRef.exerciseId)}
-                              className="h-6 w-6 p-0 text-destructive hover:text-destructive hover:bg-destructive/10 ml-2 flex-shrink-0"
-                            >
-                              <X className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        </Card>
-                      );
+                        <SinglExerciseCard
+                          key={exerciseRef.exerciseId}
+                          exercise={exercise}
+                          onAddToDay={() => addExerciseToDay(selectedDayIndex, exercise)}
+                          onRemoveFromDay={() => removeExerciseFromDay(selectedDayIndex, exercise.exerciseId)}
+                          isSelected={true}
+                          isDayList={true}
+                        />
+                      )
                     })}
                   </div>
                 ) : (
