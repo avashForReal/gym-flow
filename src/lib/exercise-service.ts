@@ -39,6 +39,10 @@ class ExerciseService {
     minMatchCharLength: 2
   };
 
+  constructor() {
+    this.initialize();
+  }
+
   async initialize(): Promise<void> {
     if (this.initialized) return;
 

@@ -1,13 +1,12 @@
 import { useFormContext } from 'react-hook-form';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Dumbbell, Search, Plus } from 'lucide-react';
+import { Dumbbell, Plus, X } from 'lucide-react';
 import type { PlanExercisesFormData, WorkoutDay } from '@/validations/workout-plan';
 import type { Exercise } from '@/data/types';
-import { useCallback, useEffect, useState } from 'react';
-import { exerciseService } from '@/lib/exercise-service';
+import { useCallback, useState } from 'react';
+import ExerciseFilterDrawer from './ExerciseFilterDrawer';
 
 interface PlanExercisesStepProps {
   onNext: () => void;
@@ -17,73 +16,41 @@ interface PlanExercisesStepProps {
 }
 
 export function PlanExercisesStep({ }: PlanExercisesStepProps) {
-  const { watch, setValue, formState: { errors } } = useFormContext<PlanExercisesFormData>();
+  const { watch, setValue } = useFormContext<PlanExercisesFormData>();
   const days = watch('days') || [];
 
-  // Exercise selection state
   const [selectedDayIndex, setSelectedDayIndex] = useState<number | null>(null);
-  const [exerciseSearchQuery, setExerciseSearchQuery] = useState('');
-  const [exerciseSearchResults, setExerciseSearchResults] = useState<Exercise[]>([]);
-  const [bodyParts, setBodyParts] = useState<string[]>([]);
-  const [selectedBodyPart, setSelectedBodyPart] = useState<string>('');
-  const [isLoadingExercises, setIsLoadingExercises] = useState(false);
-
-  // Initialize exercise service
-  useEffect(() => {
-    const initializeData = async () => {
-      try {
-        await exerciseService.initialize();
-        const filterOptions = await exerciseService.getFilterOptions();
-        setBodyParts(filterOptions.bodyParts);
-      } catch (error) {
-        console.error('Failed to initialize exercise service:', error);
-      }
-    };
-    
-    initializeData();
-  }, []);
-
-  // Search exercises
-  useEffect(() => {
-    const searchExercises = async () => {
-      if (!exerciseSearchQuery.trim() && !selectedBodyPart) {
-        setExerciseSearchResults([]);
-        return;
-      }
-
-      setIsLoadingExercises(true);
-      try {
-        const results = await exerciseService.searchExercises(exerciseSearchQuery, {
-          bodyPart: selectedBodyPart || undefined,
-          limit: 15
-        });
-        setExerciseSearchResults(results);
-      } catch (error) {
-        console.error('Exercise search failed:', error);
-        setExerciseSearchResults([]);
-      } finally {
-        setIsLoadingExercises(false);
-      }
-    };
-
-    const debounceTimer = setTimeout(searchExercises, 300);
-    return () => clearTimeout(debounceTimer);
-  }, [exerciseSearchQuery, selectedBodyPart]);
+  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+  const [exerciseDetails, setExerciseDetails] = useState<Record<string, Exercise>>({});
 
   const addExerciseToDay = useCallback((dayIndex: number, exercise: Exercise) => {
     const updatedDays = [...days];
     const day = updatedDays[dayIndex];
-    
-    // Check if exercise already exists
+
     const exerciseExists = day.exercises.some(ex => ex.exerciseId === exercise.exerciseId);
     if (exerciseExists) return;
-    
+
     updatedDays[dayIndex] = {
       ...day,
       exercises: [...day.exercises, exercise],
       isRestDay: false
     };
-    
+
+    setValue('days', updatedDays, { shouldValidate: true });
+    setExerciseDetails(prev => ({
+      ...prev,
+      [exercise.exerciseId]: exercise
+    }));
+  }, [days, setValue]);
+
+  const removeExerciseFromDay = useCallback((dayIndex: number, exerciseId: string) => {
+    const updatedDays = [...days];
+    const day = updatedDays[dayIndex];
+    updatedDays[dayIndex] = {
+      ...day,
+      exercises: day.exercises.filter(ex => ex.exerciseId !== exerciseId),
+      isRestDay: false
+    };
     setValue('days', updatedDays, { shouldValidate: true });
   }, [days, setValue]);
 
@@ -120,107 +87,69 @@ export function PlanExercisesStep({ }: PlanExercisesStepProps) {
 
       {selectedDayIndex !== null && !days[selectedDayIndex].isRestDay && (
         <div className="flex-1 flex flex-col">
-          {/* Exercise Search - Mobile Optimized */}
-          <div className="p-3 border-b border-border space-y-3 bg-background">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search exercises..."
-                value={exerciseSearchQuery}
-                onChange={(e) => setExerciseSearchQuery(e.target.value)}
-                className="pl-10 h-12 text-base border-2 focus:border-primary"
-              />
-            </div>
-            
-            {/* Body Part Filters - Mobile Optimized */}
-            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+          {/* Current Day Exercises */}
+          <div className="p-3 border-b border-border">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-medium">Current Exercises</h3>
               <Button
-                variant={selectedBodyPart === '' ? "default" : "outline"}
+                variant="outline"
                 size="sm"
-                onClick={() => setSelectedBodyPart('')}
-                className="flex-shrink-0 h-10 px-3 text-sm font-medium"
+                onClick={() => setIsFilterDrawerOpen(true)}
+                className="h-8 px-3 text-xs"
               >
-                All
+                <Plus className="h-3 w-3 mr-1" />
+                Add Exercise
               </Button>
-              {bodyParts.slice(0, 8).map(part => (
-                <Button
-                  key={part}
-                  variant={selectedBodyPart === part ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedBodyPart(part)}
-                  className="flex-shrink-0 h-10 px-3 text-sm font-medium whitespace-nowrap"
-                >
-                  {part}
-                </Button>
-              ))}
             </div>
-          </div>
 
-          {/* Exercise Results - Mobile Optimized */}
-          <div className="flex-1 overflow-y-auto p-3">
-            {isLoadingExercises && (
-              <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                <p className="text-muted-foreground">Searching exercises...</p>
-              </div>
-            )}
+            <div>
+              {
+                days[selectedDayIndex].exercises.length > 0 ? (
+                  <div className="space-y-2">
+                    {days[selectedDayIndex].exercises.map((exerciseRef) => {
+                      const exercise = exerciseDetails[exerciseRef.exerciseId];
+                      if (!exercise) return null;
 
-            {!isLoadingExercises && exerciseSearchResults.length > 0 && (
-              <div className="space-y-2">
-                {exerciseSearchResults.map((exercise) => (
-                  <Card 
-                    key={exercise.exerciseId} 
-                    className="p-3 hover:shadow-md transition-shadow cursor-pointer border-2 hover:border-primary/30"
-                    onClick={() => addExerciseToDay(selectedDayIndex, exercise)}
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-sm mb-1 line-clamp-2">{exercise.name}</h3>
-                        <div className="flex flex-wrap gap-1">
-                          {exercise.bodyParts.slice(0, 3).map(part => (
-                            <Badge key={part} variant="secondary" className="text-xs px-2 py-1">
-                              {part}
-                            </Badge>
-                          ))}
-                          {exercise.bodyParts.length > 3 && (
-                            <Badge variant="outline" className="text-xs px-2 py-1">
-                              +{exercise.bodyParts.length - 3}
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          addExerciseToDay(selectedDayIndex, exercise);
-                        }}
-                        className="h-8 w-8 p-0 text-primary hover:text-primary hover:bg-primary/10 ml-2 flex-shrink-0"
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            )}
-
-            {!isLoadingExercises && (exerciseSearchQuery || selectedBodyPart) && exerciseSearchResults.length === 0 && (
-              <div className="text-center py-12">
-                <Dumbbell className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-                <p className="text-muted-foreground font-medium mb-2">No exercises found</p>
-                <p className="text-xs text-muted-foreground">Try a different search term or filter.</p>
-              </div>
-            )}
-
-            {!isLoadingExercises && !exerciseSearchQuery && !selectedBodyPart && (
-              <div className="text-center py-12">
-                <Search className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-                <p className="text-muted-foreground font-medium mb-2">Search for exercises</p>
-                <p className="text-xs text-muted-foreground">Type to search or use filters above.</p>
-              </div>
-            )}
+                      return (
+                        <Card key={exerciseRef.exerciseId} className="p-3">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-medium text-sm mb-1">{exercise.name}</h4>
+                              <div className="flex flex-wrap gap-1">
+                                {exercise.bodyParts.slice(0, 3).map(part => (
+                                  <Badge key={part} variant="secondary" className="text-xs px-2 py-1">
+                                    {part}
+                                  </Badge>
+                                ))}
+                                {exercise.bodyParts.length > 3 && (
+                                  <Badge variant="outline" className="text-xs px-2 py-1">
+                                    +{exercise.bodyParts.length - 3}
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeExerciseFromDay(selectedDayIndex, exerciseRef.exerciseId)}
+                              className="h-6 w-6 p-0 text-destructive hover:text-destructive hover:bg-destructive/10 ml-2 flex-shrink-0"
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <Dumbbell className="h-12 w-12 text-muted-foreground mx-auto mb-3 opacity-50" />
+                    <p className="text-muted-foreground text-sm mb-2">No exercises added yet</p>
+                    <p className="text-xs text-muted-foreground">Tap "Add Exercise" to get started</p>
+                  </div>
+                )
+              }
+            </div>
           </div>
         </div>
       )}
@@ -233,6 +162,13 @@ export function PlanExercisesStep({ }: PlanExercisesStepProps) {
             <p className="text-xs text-muted-foreground">Choose a day above to manage exercises for that day.</p>
           </div>
         </div>
+      )}
+
+      {isFilterDrawerOpen && (
+        <ExerciseFilterDrawer
+          setIsFilterDrawerOpen={setIsFilterDrawerOpen}
+          selectedDayName={getDisplayName(days[selectedDayIndex!])}
+        />
       )}
     </div>
   );
