@@ -1,10 +1,7 @@
 import { useFormContext } from 'react-hook-form';
-import { Moon, Zap, Target } from 'lucide-react';
+import { Moon, Zap } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import type { PlanReviewFormData, WorkoutDay } from '@/validations/workout-plan';
-import type { Exercise } from '@/data/types';
-import { exerciseService } from '@/lib/exercise-service';
-import { useEffect, useState } from 'react';
 
 interface PlanReviewStepProps {
   onNext: () => void;
