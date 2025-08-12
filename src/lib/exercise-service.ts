@@ -4,11 +4,10 @@ import { DataLoader } from '@/data/load';
 import type { Exercise as ExerciseData } from '@/data/types';
 
 export interface ExerciseSearchOptions {
-  category?: 'strength' | 'cardio' | 'flexibility' | 'sports';
   bodyPart?: string;
   equipment?: string;
   muscle?: string;
-  difficulty?: 'beginner' | 'intermediate' | 'advanced';
+  offset?: number;
   limit?: number;
 }
 
@@ -26,17 +25,16 @@ class ExerciseService {
   private initialized = false;
   private fuseOptions: IFuseOptions<ExerciseData> = {
     keys: [
-      { name: 'name', weight: 0.7 },
-      { name: 'targetMuscles', weight: 0.5 },
-      { name: 'bodyParts', weight: 0.4 },
-      { name: 'equipments', weight: 0.3 },
-      { name: 'secondaryMuscles', weight: 0.2 }
+      { name: 'name', weight: 0.4 },
+      { name: 'targetMuscles', weight: 0.25 },
+      { name: 'bodyParts', weight: 0.2 },
+      { name: 'equipments', weight: 0.15 },
+      { name: 'secondaryMuscles', weight: 0.1 }
     ],
     threshold: 0.3,
-    distance: 100,
-    includeScore: true,
-    includeMatches: true,
-    minMatchCharLength: 2
+    includeScore: false,
+    ignoreLocation: true,
+    findAllMatches: true
   };
 
   constructor() {
@@ -66,10 +64,36 @@ class ExerciseService {
     }
   }
 
+  
+  /**
+   * Paginate results
+   */
+  private paginateResults(
+    exercises: ExerciseData[],
+    offset: number,
+    limit: number,
+  ): { exercises: ExerciseData[]; totalPages: number; currentPage: number; totalCount: number } {
+    const safeOffset = Math.max(0, Number(offset) || 0)
+    const safeLimit = Math.max(1, Math.min(100, Number(limit) || 10))
+
+    const totalCount = exercises.length
+    const totalPages = Math.ceil(totalCount / safeLimit)
+    const currentPage = Math.floor(safeOffset / safeLimit) + 1
+
+    const paginated = exercises.slice(safeOffset, safeOffset + safeLimit)
+
+    return {
+      exercises: paginated,
+      totalPages,
+      currentPage,
+      totalCount
+    }
+  }
+
   /**
    * Search exercises with fuzzy matching
    */
-  async searchExercises(query: string, options: ExerciseSearchOptions = {}): Promise<ExerciseData[]> {
+  async searchExercises(query: string, options: ExerciseSearchOptions = {}) {
     await this.initialize();
     this.ensureInitialized();
 
@@ -87,20 +111,9 @@ class ExerciseService {
     // Apply filters
     results = this.applyFilters(results, options);
 
-    // Apply limit
-    if (options.limit) {
-      results = results.slice(0, options.limit);
-    }
+    const paginatedResults = this.paginateResults(results, options.offset || 0, options.limit || 10);
 
-    return results;
-  }
-
-  /**
-   * Get exercises by category
-   */
-  async getExercisesByCategory(category: ExerciseSearchOptions['category']): Promise<ExerciseData[]> {
-    await this.initialize();
-    return this.applyFilters(this.exercises, { category });
+    return paginatedResults;
   }
 
   /**
@@ -214,10 +227,6 @@ class ExerciseService {
   private applyFilters(exercises: ExerciseData[], options: ExerciseSearchOptions): ExerciseData[] {
     let filtered = exercises;
 
-    if (options.category) {
-      filtered = filtered.filter(exercise => this.categorizeExercise(exercise) === options.category);
-    }
-
     if (options.bodyPart) {
       filtered = filtered.filter(exercise => 
         exercise.bodyParts.some(part => part.toLowerCase() === options.bodyPart!.toLowerCase())
@@ -235,10 +244,6 @@ class ExerciseService {
         [...exercise.targetMuscles, ...exercise.secondaryMuscles]
           .some(muscle => muscle.toLowerCase() === options.muscle!.toLowerCase())
       );
-    }
-
-    if (options.difficulty) {
-      filtered = filtered.filter(exercise => this.determineDifficulty(exercise) === options.difficulty);
     }
 
     return filtered;
@@ -263,21 +268,6 @@ class ExerciseService {
     }
     
     return 'sports';
-  }
-
-  private determineDifficulty(exercise: ExerciseData): 'beginner' | 'intermediate' | 'advanced' {
-    // Simple heuristic based on equipment and exercise complexity
-    if (exercise.equipments.includes('body weight')) {
-      return 'beginner';
-    }
-    
-    if (exercise.equipments.some(eq => 
-      ['barbell', 'olympic barbell', 'smith machine', 'leverage machine'].includes(eq)
-    )) {
-      return 'advanced';
-    }
-    
-    return 'intermediate';
   }
 }
 

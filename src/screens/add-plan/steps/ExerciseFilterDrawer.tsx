@@ -27,7 +27,7 @@ const ExerciseFilterDrawer = ({
     const [selectedBodyPart, setSelectedBodyPart] = useState('');
     const [selectedMuscle, setSelectedMuscle] = useState('');
 
-    const { exercises, bodyParts, muscles, isLoadingExercises } = useExercises({
+    const { exercises, bodyParts, muscles, isLoadingExercises, totalCount } = useExercises({
         query: exerciseSearchQuery,
         bodyPart: selectedBodyPart,
         muscle: selectedMuscle,
@@ -222,7 +222,7 @@ const ExerciseFilterDrawer = ({
                         <div className="px-2 py-1 border-b border-border/50 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
                             <h4 className="text-xs font-semibold text-blue-700 dark:text-blue-300 tracking-wide flex items-center gap-1">
                                 <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
-                                {isLoadingExercises ? 'Searching...' : exercises.length > 0 ? `${exercises.length} Exercise${exercises.length === 1 ? '' : 's'} Found` : 'Search Results'}
+                                {isLoadingExercises ? 'Searching...' : totalCount > 0 ? `${totalCount} Exercise${totalCount === 1 ? '' : 's'} Found` : 'Search Results'}
                             </h4>
                         </div>
 
@@ -263,14 +263,6 @@ const ExerciseFilterDrawer = ({
                                     <Dumbbell className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
                                     <p className="text-muted-foreground font-medium mb-2">No exercises found</p>
                                     <p className="text-xs text-muted-foreground">Try adjusting your search or filters above.</p>
-                                </div>
-                            )}
-
-                            {!isLoadingExercises && !exerciseSearchQuery && !selectedBodyPart && !selectedMuscle && (
-                                <div className="text-center py-12">
-                                    <Search className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-                                    <p className="text-muted-foreground font-medium mb-2">Search for exercises</p>
-                                    <p className="text-xs text-muted-foreground">Type to search or use body part/muscle filters above.</p>
                                 </div>
                             )}
                         </div>

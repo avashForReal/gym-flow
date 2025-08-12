@@ -1,14 +1,20 @@
 import { db, type WorkoutPlan } from "@/lib/database";
 import { useEffect, useState } from "react";
 
-export const usePlans = () => {
+type UsePlansProps = {
+  enableFetchPlans?: boolean;
+};
+
+export const usePlans = ({ enableFetchPlans = true }: UsePlansProps) => {
   const [workoutPlans, setWorkoutPlans] = useState<WorkoutPlan[]>([]);
   const [isCreating, setIsCreating] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    loadWorkoutPlans();
-  }, []);
+    if (enableFetchPlans) {
+      loadWorkoutPlans();
+    }
+  }, [enableFetchPlans]);
 
   const loadWorkoutPlans = async () => {
     try {
@@ -24,7 +30,7 @@ export const usePlans = () => {
 
   const handleSavePlan = async (planData: {
     name: string;
-    description: string;
+    description?: string;
     days: Array<{
       dayIndex: number;
       name: string;

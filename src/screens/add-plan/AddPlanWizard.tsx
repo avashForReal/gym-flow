@@ -5,6 +5,7 @@ import { workoutPlanSchema, type WorkoutPlanFormData } from '@/validations/worko
 import { useNavigate } from '@tanstack/react-router';
 import AddPlanHeader from './add-plan-header/add-plan-header';
 import AddPlanFooter from './add-plan-footer/add-plan-footer';
+import { usePlans } from '@/hooks/usePlans';
 
 const defaultDayNames = [
   'Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'
@@ -12,6 +13,7 @@ const defaultDayNames = [
 
 export function AddPlanWizard() {
   const navigate = useNavigate()
+
   const form = useForm<WorkoutPlanFormData>({
     resolver: zodResolver(workoutPlanSchema),
     defaultValues: {
@@ -43,16 +45,18 @@ export function AddPlanWizard() {
     form
   });
 
+  const {
+    handleSavePlan
+  } = usePlans({
+    enableFetchPlans: false
+  })
+
 
   const onSubmit = async (data: WorkoutPlanFormData) => {
     try {
       setIsSubmitting(true);
-      console.log("data", data)
-      // onSave?.({
-      //   name: data.name.trim(),
-      //   description: data.description?.trim() || '',
-      //   days: data.days
-      // });
+      await handleSavePlan(data)
+      navigate({ to: '/plans' })
     } catch (error) {
       console.error('Error saving workout plan:', error);
       // Handle error (show toast, etc.)
