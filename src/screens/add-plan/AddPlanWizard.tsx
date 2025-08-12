@@ -76,14 +76,12 @@ export function AddPlanWizard() {
         />
 
         <div className="pt-[4rem] pb-[10rem] h-full overflow-y-auto w-full">
-          <div className="p-4">
-            <StepComponent
-              onNext={handleNext}
-              onBack={handleBack}
-              isFirst={isFirstStep}
-              isLast={isLastStep}
-            />
-          </div>
+          <StepComponent
+            onNext={handleNext}
+            onBack={handleBack}
+            isFirst={isFirstStep}
+            isLast={isLastStep}
+          />
         </div>
 
         {/* Footer - fixed at bottom above navigation */}

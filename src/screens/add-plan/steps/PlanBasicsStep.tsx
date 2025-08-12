@@ -9,7 +9,7 @@ export function PlanBasicsStep() {
   const { register, formState: { errors } } = useFormContext<PlanBasicsFormData>();
 
   return (
-    <div className="space-y-2 px-2">
+    <div className="space-y-2 px-6 py-4">
       <div className="space-y-2">
         <div className="space-y-1">
           <Label htmlFor="name" className="font-semibold text-xs">Plan Name *</Label>

@@ -45,23 +45,23 @@ export function PlanScheduleStep({ }: PlanScheduleStepProps) {
   };
 
   return (
-    <div className="space-y-2 px-1">
+    <div className="space-y-2 px-6 py-4">
       <div className="flex flex-col gap-6 ml-2">
         {days.map((day) => {
           const isRest = day.isRestDay;
           return (
             <Card
               key={day.dayIndex}
-              className={`!gap-2 relative flex flex-row items-center px-3 py-2 rounded-lg shadow-sm border transition-colors min-w-0 w-full
+              className={`!gap-2 relative flex flex-row items-center px-3 py-4 rounded-lg shadow-sm border transition-colors min-w-0 w-full
                 ${isRest
                   ? "bg-muted/80 border-dashed border-muted-foreground/30 opacity-80"
                   : "bg-background border-primary/30"
                 }
               `}
             >
-              <div className="absolute -left-4 -top-4 flex flex-col items-center justify-center mr-3">
+              <div className="absolute -left-2 -top-2 flex flex-col items-center justify-center mr-3">
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold mb-1
+                  className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold mb-1
                     ${isRest
                       ? "bg-muted text-muted-foreground border border-muted-foreground/30"
                       : "bg-primary text-primary-foreground border border-primary/60"

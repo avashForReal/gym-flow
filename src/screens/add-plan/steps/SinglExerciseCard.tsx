@@ -1,5 +1,5 @@
 import ExerciseGif from "@/components/exercise-gif/exercise-gif";
-import ExerciseDetailsModal from "@/components/ExerciseDetailsModal";
+import ExerciseDetailsModal from "@/components/exercise-details-modal/exercise-details-modal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import type { Exercise } from "@/data/types";
@@ -187,8 +187,6 @@ const SinglExerciseCard = ({
                 exercise={exercise}
                 isOpen={showDetailsModal}
                 onClose={() => setShowDetailsModal(false)}
-                onAddToDay={onAddToDay}
-                showAddButton={true}
             />
         </>
     )
