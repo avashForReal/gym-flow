@@ -19,8 +19,13 @@ const PlansCard = ({ plan, handleSetActivePlan, handleDeletePlan }: PlansCardPro
   const avgExercisesPerDay = activeDaysCount > 0 ? Math.ceil(totalExercises / activeDaysCount) : 0
   const isActivePlan = plan.isActive
 
-  const handleEdit = () => {
-    navigate({ to: '/add-plan', search: { edit: plan.id.toString() } })
+  const handleEdit = (planId: number) => {
+    navigate({
+      to: '/edit-plans/$planId',
+      params: {
+        planId: planId.toString()
+      }
+    })
   }
 
   const handleDelete = async () => {
@@ -61,7 +66,7 @@ const PlansCard = ({ plan, handleSetActivePlan, handleDeletePlan }: PlansCardPro
               variant="ghost"
               size="sm"
               className="h-8 w-8 p-0 rounded-lg hover:bg-primary/10 hover:text-primary"
-              onClick={handleEdit}
+              onClick={() => handleEdit(plan.id)}
             >
               <Edit className="h-3.5 w-3.5" />
             </Button>

@@ -11,9 +11,10 @@ interface PlanFooterProps {
     handleNext: () => void
     isFirstStep: boolean
     handleBack: () => void
+    isEdit?: boolean
 }
 
-const PlanFooter = ({ isLastStep, handleSubmit, onSubmit, isSubmitting, handleNext, isFirstStep, handleBack }: PlanFooterProps) => {
+const PlanFooter = ({ isLastStep, handleSubmit, onSubmit, isSubmitting, handleNext, isFirstStep, handleBack, isEdit = false }: PlanFooterProps) => {
     return (
         <div className="fixed bottom-[5rem] left-0 right-0 bg-background border-t border-border z-20">
             <div className="px-6 py-2 flex gap-2 max-w-md mx-auto">
@@ -40,7 +41,7 @@ const PlanFooter = ({ isLastStep, handleSubmit, onSubmit, isSubmitting, handleNe
                         ) : (
                             <>
                                 <Check className="h-4 w-4" />
-                                <span className="truncate">Create Plan</span>
+                                <span className="truncate">{isEdit ? 'Save Changes' : 'Create Plan'}</span>
                             </>
                         )}
                     </Button>

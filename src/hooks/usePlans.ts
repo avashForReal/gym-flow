@@ -67,6 +67,10 @@ export const usePlans = ({ enableFetchPlans = true }: UsePlansProps) => {
     await loadWorkoutPlans();
   };
 
+  const getPlanById = (planId: number) => {
+    return workoutPlans.find((plan: WorkoutPlan) => plan.id === planId);
+  };
+
   return {
     activePlan: getActivePlan(workoutPlans),
     workoutPlans,
@@ -75,7 +79,8 @@ export const usePlans = ({ enableFetchPlans = true }: UsePlansProps) => {
     setIsCreating,
     handleSavePlan,
     handleDeletePlan,
-    toggleActivePlan
+    toggleActivePlan,
+    getPlanById
   };
 };
 
