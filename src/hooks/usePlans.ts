@@ -53,7 +53,6 @@ export const usePlans = ({ enableFetchPlans = true }: UsePlansProps) => {
     if (!confirm("Are you sure you want to delete this workout plan?")) {
       return;
     }
-
     try {
       await db.deleteWorkoutPlan(planId);
       await loadWorkoutPlans();
@@ -63,30 +62,34 @@ export const usePlans = ({ enableFetchPlans = true }: UsePlansProps) => {
     }
   };
 
-  const getActiveDaysCount = (plan: WorkoutPlan) => {
-    return plan.days.filter((day: any) => !day.isRestDay).length;
-  };
-
-  const getTotalExercisesCount = (plan: WorkoutPlan) => {
-    return plan.days.reduce(
-      (total: number, day: any) => total + day.exercises.length,
-      0
-    );
-  };
-
-  const getActivePlan = () => {
-    return workoutPlans.find((plan: WorkoutPlan) => plan.isActive);
+  const toggleActivePlan = async (planId: number, isActive: boolean) => {
+    await db.toggleActivePlan(planId, isActive);
+    await loadWorkoutPlans();
   };
 
   return {
+    activePlan: getActivePlan(workoutPlans),
     workoutPlans,
     isCreating,
     isLoading,
     setIsCreating,
     handleSavePlan,
     handleDeletePlan,
-    getActiveDaysCount,
-    getTotalExercisesCount,
-    getActivePlan,
+    toggleActivePlan
   };
+};
+
+export const getActiveDaysCount = (plan: WorkoutPlan) => {
+  return plan.days.filter((day: any) => !day.isRestDay).length;
+};
+
+export const getTotalExercisesCount = (plan: WorkoutPlan) => {
+  return plan.days.reduce(
+    (total: number, day: any) => total + day.exercises.length,
+    0
+  );
+};
+
+export const getActivePlan = (workoutPlans: WorkoutPlan[]) => {
+  return workoutPlans.find((plan: WorkoutPlan) => plan.isActive);
 };

@@ -8,7 +8,7 @@ export interface UserProfile {
   heightInches: number;
   weightKg: number;
   weightLbs: number;
-  targetWeightKg: number; 
+  targetWeightKg: number;
   targetWeightLbs: number;
   gender: "male" | "female" | "other" | "prefer-not-to-say";
   activityLevel:
@@ -73,7 +73,8 @@ export class GymFlowDatabase extends Dexie {
       users: "++id, name, createdAt, updatedAt",
       workoutPlans: "++id, name, createdAt, updatedAt",
       workoutPlanDays: "++id, planId, dayIndex, createdAt, updatedAt",
-      workoutPlanExercises: "++id, planId, dayId, exerciseId, createdAt, updatedAt",
+      workoutPlanExercises:
+        "++id, planId, dayId, exerciseId, createdAt, updatedAt",
     });
 
     this.users.hook("creating", function (_primKey, obj, _trans) {
@@ -121,18 +122,13 @@ export class GymFlowDatabase extends Dexie {
     const user = await this.users.orderBy("id").first();
     return !user;
   }
-  
+
   async clearAllData(): Promise<void> {
-    await Promise.all([
-      this.users.clear(),
-    ]);
+    await Promise.all([this.users.clear()]);
   }
 
   async exportData(): Promise<object> {
-    const [users] =
-      await Promise.all([
-        this.users.toArray(),
-      ]);
+    const [users] = await Promise.all([this.users.toArray()]);
 
     return {
       users,
@@ -154,22 +150,22 @@ export class GymFlowDatabase extends Dexie {
     }>;
   }): Promise<number> {
     const now = new Date();
-    
+
     // Create the plan
     const planId = await this.workoutPlans.add({
       name: planData.name,
       description: planData.description,
       createdAt: now,
-      updatedAt: now
+      updatedAt: now,
     } as WorkoutPlan);
 
-    if (typeof planId === 'undefined') {
-      throw new Error('Failed to create workout plan');
+    if (typeof planId === "undefined") {
+      throw new Error("Failed to create workout plan");
     }
 
     // Create the days and exercises
     for (const dayData of planData.days) {
-      const dayName = dayData.customName 
+      const dayName = dayData.customName
         ? `${dayData.name} [${dayData.customName}]`
         : dayData.name;
 
@@ -179,10 +175,10 @@ export class GymFlowDatabase extends Dexie {
         name: dayName,
         isRestDay: dayData.isRestDay,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
       } as WorkoutPlanDay);
 
-      if (typeof dayId === 'undefined') {
+      if (typeof dayId === "undefined") {
         throw new Error(`Failed to create day ${dayData.dayIndex}`);
       }
 
@@ -193,7 +189,7 @@ export class GymFlowDatabase extends Dexie {
           dayId: dayId as number,
           exerciseId: exercise.exerciseId,
           createdAt: now,
-          updatedAt: now
+          updatedAt: now,
         } as WorkoutPlanExercise);
       }
     }
@@ -202,19 +198,22 @@ export class GymFlowDatabase extends Dexie {
   }
 
   async getWorkoutPlans(): Promise<WorkoutPlan[]> {
-    const plans = await this.workoutPlans.orderBy('createdAt').reverse().toArray();
-    
+    const plans = await this.workoutPlans
+      .orderBy("createdAt")
+      .reverse()
+      .toArray();
+
     // Load days and exercises for each plan
     for (const plan of plans) {
       const days = await this.workoutPlanDays
-        .where('planId')
+        .where("planId")
         .equals(plan.id)
         .toArray();
       days.sort((a, b) => a.dayIndex - b.dayIndex);
 
       for (const day of days) {
         day.exercises = await this.workoutPlanExercises
-          .where('dayId')
+          .where("dayId")
           .equals(day.id)
           .toArray();
       }
@@ -222,22 +221,22 @@ export class GymFlowDatabase extends Dexie {
       plan.days = days;
     }
 
-    return plans;
-  }
+    return plans.sort((_, b) => (b.isActive ? 1 : -1));
+  } 
 
   async getWorkoutPlan(planId: number): Promise<WorkoutPlan | undefined> {
     const plan = await this.workoutPlans.get(planId);
     if (!plan) return undefined;
 
     const days = await this.workoutPlanDays
-      .where('planId')
+      .where("planId")
       .equals(planId)
       .toArray();
     days.sort((a, b) => a.dayIndex - b.dayIndex);
 
     for (const day of days) {
       day.exercises = await this.workoutPlanExercises
-        .where('dayId')
+        .where("dayId")
         .equals(day.id)
         .toArray();
     }
@@ -246,74 +245,41 @@ export class GymFlowDatabase extends Dexie {
     return plan;
   }
 
-  async updateWorkoutPlan(planId: number, updates: Partial<Pick<WorkoutPlan, 'name' | 'description'>>): Promise<void> {
+  async updateWorkoutPlan(
+    planId: number,
+    updates: Partial<Pick<WorkoutPlan, "name" | "description">>
+  ): Promise<void> {
     await this.workoutPlans.update(planId, {
       ...updates,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     });
   }
 
   async deleteWorkoutPlan(planId: number): Promise<void> {
     // Delete exercises first
-    const days = await this.workoutPlanDays.where('planId').equals(planId).toArray();
+    const days = await this.workoutPlanDays
+      .where("planId")
+      .equals(planId)
+      .toArray();
     for (const day of days) {
-      await this.workoutPlanExercises.where('dayId').equals(day.id).delete();
+      await this.workoutPlanExercises.where("dayId").equals(day.id).delete();
     }
-    
+
     // Delete days
-    await this.workoutPlanDays.where('planId').equals(planId).delete();
-    
+    await this.workoutPlanDays.where("planId").equals(planId).delete();
+
     // Delete plan
     await this.workoutPlans.delete(planId);
   }
 
-  async addExerciseToDay(dayId: number, exerciseId: string): Promise<void> {
-    const day = await this.workoutPlanDays.get(dayId);
-    if (!day) throw new Error('Day not found');
-
-    // Check if exercise already exists
-    const existingExercise = await this.workoutPlanExercises
-      .where(['dayId', 'exerciseId'])
-      .equals([dayId, exerciseId])
-      .first();
-
-    if (existingExercise) return; // Already exists
-
-    await this.workoutPlanExercises.add({
-      planId: day.planId,
-      dayId,
-      exerciseId,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    } as WorkoutPlanExercise);
-
-    // Mark day as not rest day if it was
-    if (day.isRestDay) {
-      await this.workoutPlanDays.update(dayId, { 
-        isRestDay: false, 
-        updatedAt: new Date() 
-      });
+  async toggleActivePlan(planId: number, isActive: boolean): Promise<void> {
+    for (const plan of await this.workoutPlans.toArray()) {
+      if (plan.isActive) {
+        await this.workoutPlans.update(plan.id, { isActive: false });
+      }
     }
-  }
 
-  async removeExerciseFromDay(dayId: number, exerciseId: string): Promise<void> {
-    await this.workoutPlanExercises
-      .where(['dayId', 'exerciseId'])
-      .equals([dayId, exerciseId])
-      .delete();
-
-    // Check if day should become rest day
-    const remainingExercises = await this.workoutPlanExercises
-      .where('dayId')
-      .equals(dayId)
-      .count();
-
-    if (remainingExercises === 0) {
-      await this.workoutPlanDays.update(dayId, { 
-        isRestDay: true, 
-        updatedAt: new Date() 
-      });
-    }
+    await this.workoutPlans.update(planId, { isActive });
   }
 }
 

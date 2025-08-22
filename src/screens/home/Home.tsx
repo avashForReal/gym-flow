@@ -19,10 +19,9 @@ import { getGreeting, getTodaysFormattedDate } from "@/lib/date-helper"
 import { useCurrentUser } from "@/stores/userStore"
 const Home = () => {
   const currentUser = useCurrentUser()
-  const { getActivePlan } = usePlans({
+  const { activePlan } = usePlans({
     enableFetchPlans: true
   });
-  const activePlan = getActivePlan();
   const [todayProgress] = useState(0);
 
   const navigate = useNavigate();
