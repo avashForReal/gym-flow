@@ -13,7 +13,7 @@ const EditPlan = () => {
     const navigate = useNavigate()
     const { planId } = Route.useParams();
 
-    const { isLoading, getPlanById } = usePlans({
+    const { isLoading, getPlanById, handleUpdatePlan } = usePlans({
         enableFetchPlans: true
     });
     const plan = getPlanById(Number(planId));
@@ -44,11 +44,10 @@ const EditPlan = () => {
         try {
             setIsSubmitting(true);
             console.log("data", data)
-            //   await handleSavePlan(data)
+            await handleUpdatePlan(Number(planId), data)
             navigate({ to: '/plans' })
         } catch (error) {
             console.error('Error saving workout plan:', error);
-            // Handle error (show toast, etc.)
         } finally {
             setIsSubmitting(false);
         }

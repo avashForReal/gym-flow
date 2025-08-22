@@ -197,6 +197,63 @@ export class GymFlowDatabase extends Dexie {
     return planId as number;
   }
 
+  async updateWorkoutPlan(planId: number, planData: {
+    name: string;
+    description?: string;
+    days: Array<{
+      dayIndex: number;
+      name: string;
+      customName?: string;
+      isRestDay: boolean;
+      exercises: Array<{ exerciseId: string }>;
+    }>;
+  }): Promise<number> {
+    const now = new Date();
+
+    // Update the plan
+    await this.workoutPlans.update(planId, {
+      name: planData.name,
+      description: planData.description,
+      updatedAt: now,
+    });
+
+    await this.workoutPlanDays.where("planId").equals(planId).delete();
+    await this.workoutPlanExercises.where("planId").equals(planId).delete();
+
+    // Update the days and exercises
+    for (const dayData of planData.days) {
+      const dayName = dayData.customName
+        ? `${dayData.name} [${dayData.customName}]`
+        : dayData.name;
+
+      const dayId = await this.workoutPlanDays.add({
+        planId: planId as number,
+        dayIndex: dayData.dayIndex,
+        name: dayName,
+        isRestDay: dayData.isRestDay,
+        createdAt: now,
+        updatedAt: now,
+      } as WorkoutPlanDay);
+
+      if (typeof dayId === "undefined") {
+        throw new Error(`Failed to create day ${dayData.dayIndex}`);
+      }
+
+      // Add exercises for this day
+      for (const exercise of dayData.exercises) {
+        await this.workoutPlanExercises.add({
+          planId: planId as number,
+          dayId: dayId as number,
+          exerciseId: exercise.exerciseId,
+          createdAt: now,
+          updatedAt: now,
+        } as WorkoutPlanExercise);
+      }
+    }
+
+    return planId as number;
+  }
+
   async getWorkoutPlans(): Promise<WorkoutPlan[]> {
     const plans = await this.workoutPlans
       .orderBy("createdAt")
@@ -243,16 +300,6 @@ export class GymFlowDatabase extends Dexie {
 
     plan.days = days;
     return plan;
-  }
-
-  async updateWorkoutPlan(
-    planId: number,
-    updates: Partial<Pick<WorkoutPlan, "name" | "description">>
-  ): Promise<void> {
-    await this.workoutPlans.update(planId, {
-      ...updates,
-      updatedAt: new Date(),
-    });
   }
 
   async deleteWorkoutPlan(planId: number): Promise<void> {

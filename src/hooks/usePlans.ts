@@ -49,6 +49,27 @@ export const usePlans = ({ enableFetchPlans = true }: UsePlansProps) => {
     }
   };
 
+  const handleUpdatePlan = async (planId: number, planData: {
+    name: string;
+    description?: string;
+    days: Array<{
+      dayIndex: number;
+      name: string;
+      customName?: string;
+      isRestDay: boolean;
+      exercises: Array<{ exerciseId: string }>;
+    }>;
+  }) => {
+    try {
+      await db.updateWorkoutPlan(planId, planData);
+      await loadWorkoutPlans();
+      setIsCreating(false);
+    } catch (error) {
+      console.error("Failed to update workout plan:", error);
+      alert("Failed to update workout plan. Please try again.");
+    }
+  };
+
   const handleDeletePlan = async (planId: number) => {
     if (!confirm("Are you sure you want to delete this workout plan?")) {
       return;
@@ -80,7 +101,8 @@ export const usePlans = ({ enableFetchPlans = true }: UsePlansProps) => {
     handleSavePlan,
     handleDeletePlan,
     toggleActivePlan,
-    getPlanById
+    getPlanById,
+    handleUpdatePlan
   };
 };
 
