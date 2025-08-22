@@ -3,15 +3,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useWorkoutPlanWizard } from '@/hooks/useWorkoutPlanWizard';
 import { workoutPlanSchema, type WorkoutPlanFormData } from '@/validations/workout-plan';
 import { useNavigate } from '@tanstack/react-router';
-import AddPlanHeader from './add-plan-header/add-plan-header';
-import AddPlanFooter from './add-plan-footer/add-plan-footer';
 import { usePlans } from '@/hooks/usePlans';
+import PlanHeader from '../plan-header/plan-header';
+import PlanFooter from '../plan-footer/plan-footer';
 
 const defaultDayNames = [
   'Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'
 ];
 
-export function AddPlanWizard() {
+export function AddPlan() {
   const navigate = useNavigate()
 
   const form = useForm<WorkoutPlanFormData>({
@@ -72,7 +72,7 @@ export function AddPlanWizard() {
   return (
     <FormProvider {...form}>
       <div className="h-screen bg-background">
-        <AddPlanHeader
+        <PlanHeader
           currentStepData={currentStepData}
           currentStepNumber={currentStepNumber}
           totalSteps={totalSteps}
@@ -89,7 +89,7 @@ export function AddPlanWizard() {
         </div>
 
         {/* Footer - fixed at bottom above navigation */}
-        <AddPlanFooter
+        <PlanFooter
           isFirstStep={isFirstStep}
           handleBack={handleBack}
           isLastStep={isLastStep}

@@ -4,7 +4,7 @@ import {
   PlanScheduleStep,
   PlanExercisesStep,
   PlanReviewStep,
-} from "@/screens/add-plan/steps";
+} from "@/screens/plans-wizard/steps";
 import type { WorkoutPlanFormData } from "@/validations/workout-plan";
 import type { UseFormReturn } from "react-hook-form";
 import { Calendar, Check, Dumbbell, Info } from "lucide-react";

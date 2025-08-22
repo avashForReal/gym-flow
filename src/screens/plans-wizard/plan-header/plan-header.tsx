@@ -13,19 +13,19 @@ import {
     AlertDialogAction,
 } from '@/components/ui/alert-dialog';
 
-interface AddPlanHeaderProps {
+interface PlanHeaderProps {
     handleCancel: () => void
     currentStepData: any
     currentStepNumber: number
     totalSteps: number
 }
 
-const AddPlanHeader = ({
+const PlanHeader = ({
     handleCancel,
     currentStepData,
     currentStepNumber,
     totalSteps,
-}: AddPlanHeaderProps) => {
+}: PlanHeaderProps) => {
     const [open, setOpen] = useState(false);
     const Icon = currentStepData.icon;
 
@@ -89,4 +89,4 @@ const AddPlanHeader = ({
     )
 }
 
-export default AddPlanHeader
+export default PlanHeader

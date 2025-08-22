@@ -3,7 +3,7 @@ import type { WorkoutPlanFormData } from "@/validations/workout-plan"
 import { ArrowLeft, ArrowRight, Check } from "lucide-react"
 import type { UseFormHandleSubmit } from "react-hook-form"
 
-interface AddPlanFooterProps {
+interface PlanFooterProps {
     isLastStep: boolean
     handleSubmit: UseFormHandleSubmit<WorkoutPlanFormData>
     onSubmit: (data: WorkoutPlanFormData) => void
@@ -13,7 +13,7 @@ interface AddPlanFooterProps {
     handleBack: () => void
 }
 
-const AddPlanFooter = ({ isLastStep, handleSubmit, onSubmit, isSubmitting, handleNext, isFirstStep, handleBack }: AddPlanFooterProps) => {
+const PlanFooter = ({ isLastStep, handleSubmit, onSubmit, isSubmitting, handleNext, isFirstStep, handleBack }: PlanFooterProps) => {
     return (
         <div className="fixed bottom-[5rem] left-0 right-0 bg-background border-t border-border z-20">
             <div className="px-6 py-2 flex gap-2 max-w-md mx-auto">
@@ -59,4 +59,4 @@ const AddPlanFooter = ({ isLastStep, handleSubmit, onSubmit, isSubmitting, handl
     )
 }
 
-export default AddPlanFooter
+export default PlanFooter
