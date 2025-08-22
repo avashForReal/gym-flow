@@ -170,6 +170,11 @@ class ExerciseService {
     return this.exercises.find(exercise => exercise.exerciseId === exerciseId);
   }
 
+  async getExercisesByIds(exerciseIds: string[]): Promise<ExerciseData[]> {
+    await this.initialize();
+    return this.exercises.filter(exercise => exerciseIds.includes(exercise.exerciseId));
+  }
+
   /**
    * Get exercise statistics
    */

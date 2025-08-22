@@ -3,9 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Dumbbell, Plus } from 'lucide-react';
 import type { PlanExercisesFormData, WorkoutDay } from '@/validations/workout-plan';
 import type { Exercise } from '@/data/types';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import ExerciseFilterDrawer from './ExerciseFilterDrawer';
 import SinglExerciseCard from './SinglExerciseCard';
+import { useExercisesByIds } from '@/hooks/useExercises';
 
 interface PlanExercisesStepProps {
   onNext: () => void;
@@ -21,6 +22,19 @@ export function PlanExercisesStep({ }: PlanExercisesStepProps) {
   const [selectedDayIndex, setSelectedDayIndex] = useState<number | null>(null);
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [exerciseDetails, setExerciseDetails] = useState<Record<string, Exercise>>({});
+
+  const allExerciseIds = useMemo(() => {
+    return days.flatMap(day => day.exercises.map(ex => ex.exerciseId));
+  }, [days]);
+
+  const { exercises, isLoadingExercises } = useExercisesByIds(allExerciseIds);
+
+  useEffect(() => {
+    setExerciseDetails(exercises.reduce((acc, exercise) => {
+      acc[exercise.exerciseId] = exercise;
+      return acc;
+    }, {} as Record<string, Exercise>));
+  }, [exercises, isLoadingExercises]);
 
   const addExerciseToDay = useCallback((dayIndex: number, exercise: Exercise) => {
     const updatedDays = [...days];
@@ -101,7 +115,7 @@ export function PlanExercisesStep({ }: PlanExercisesStepProps) {
               </Button>
             </div>
 
-            <div>
+            <div className='h-full overflow-y-auto mb-16'>
               {
                 days[selectedDayIndex].exercises.length > 0 ? (
                   <div className="space-y-2">

@@ -67,3 +67,21 @@ export const useExercises = ({
     totalCount,
   };
 };
+
+export const useExercisesByIds = (exerciseIds: string[]) => {
+  const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [isLoadingExercises, setIsLoadingExercises] = useState<boolean>(false);
+
+  const fetchExercisesByIds = async () => {
+    setIsLoadingExercises(true);
+    const response = await exerciseService.getExercisesByIds(exerciseIds);
+    setExercises(response);
+    setIsLoadingExercises(false);
+  };
+
+  useEffect(() => {
+    fetchExercisesByIds();
+  }, []);
+
+  return { exercises, isLoadingExercises };
+};
