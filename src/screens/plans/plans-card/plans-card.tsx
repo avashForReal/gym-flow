@@ -40,8 +40,7 @@ const PlansCard = ({ plan, handleSetActivePlan, handleDeletePlan }: PlansCardPro
   }
 
   const handleViewDetails = () => {
-    // TODO: Navigate to plan details view
-    console.log('View plan details:', plan.id)
+    navigate({ to: '/plan-details/$planId', params: { planId: plan.id.toString() } })
   }
 
   return (

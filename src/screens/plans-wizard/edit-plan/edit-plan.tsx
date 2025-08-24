@@ -43,7 +43,6 @@ const EditPlan = () => {
     const onSubmit = async (data: WorkoutPlanFormData) => {
         try {
             setIsSubmitting(true);
-            console.log("data", data)
             await handleUpdatePlan(Number(planId), data)
             navigate({ to: '/plans' })
         } catch (error) {
