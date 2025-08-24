@@ -10,7 +10,7 @@ import LogsCard from "./logs-card/logs-card"
 
 const Logs = () => {
   const navigate = useNavigate()
-  const { recentWorkouts, isLoading } = useGetRecentWorkouts()
+  const { recentWorkouts, isLoading } = useGetRecentWorkouts({})
 
   const [isExerciseDrawerOpen, setIsExerciseDrawerOpen] = useState(false)
 
@@ -44,6 +44,10 @@ const Logs = () => {
         <LogsHeader
           setIsExerciseDrawerOpen={setIsExerciseDrawerOpen}
         />
+
+        <div className="px-5 pt-2">
+          <h2 className="text-lg font-semibold mb-2">Last Logged Exercises</h2>
+        </div>
 
         <div className="px-4 py-4">
           <div className="space-y-4">

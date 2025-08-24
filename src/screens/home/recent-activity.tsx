@@ -4,7 +4,7 @@ import { Clock, History } from "lucide-react"
 import RecentActivityCard from "./recent-activity-card";
 
 const RecentActivity = () => {
-    const { recentWorkouts, isLoading } = useGetRecentWorkouts();
+    const { recentWorkouts, isLoading } = useGetRecentWorkouts({});
 
     if (isLoading) {
         return <div>Loading...</div>

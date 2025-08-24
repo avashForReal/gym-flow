@@ -433,18 +433,30 @@ export class GymFlowDatabase extends Dexie {
     return lastSessionSetSorted.length > 0 ? lastSessionSetSorted : null;
   }
 
-  async getRecentWorkoutLogs(
-    limit: number = 5
-  ): Promise<Array<WorkoutSession & { exercises: WorkoutSet[] }> | null> {
+  async getRecentWorkoutLogs(params: { limit?: number; date?: Date }): Promise<{
+    recentWorkoutLogs: Array<WorkoutSession & { exercises: WorkoutSet[] }>;
+    totalSessions: number;
+  } | null> {
+    const queryLimit = params?.limit ?? 5;
+
     const sets = await this.workoutSessions
       .orderBy("createdAt")
       .reverse()
-      .limit(limit)
+      .filter((session) =>
+        params?.date
+          ? session.date?.toISOString() === params?.date.toISOString()
+          : true
+      )
+      .limit(queryLimit)
       .toArray();
+
+    const totalSessions = await this.workoutSessions.count();
 
     if (!sets || sets.length === 0) return null;
 
-    const recentWorkoutLogs: Array<WorkoutSession & { exercises: WorkoutSet[] }> = [];
+    const recentWorkoutLogs: Array<
+      WorkoutSession & { exercises: WorkoutSet[] }
+    > = [];
 
     for (const set of sets) {
       const exercises = await this.workoutSets
@@ -457,7 +469,7 @@ export class GymFlowDatabase extends Dexie {
         exercises,
       });
     }
-    return recentWorkoutLogs;
+    return { recentWorkoutLogs, totalSessions };
   }
 
   async getWorkoutSessionsByDateRange(

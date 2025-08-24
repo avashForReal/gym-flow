@@ -21,7 +21,7 @@ const LogsHeader = ({ setIsExerciseDrawerOpen }: LogsHeaderProps) => {
                     className="h-8 px-2 rounded-md"
                     onClick={() => setIsExerciseDrawerOpen(true)}
                 >
-                    Choose Exercise
+                    Pick Exercise
                     <ArrowRight className="h-3 w-3 mr-1" />
                 </Button>
             </div>

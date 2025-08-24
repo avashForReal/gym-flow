@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useGetSessionDetails, type ExerciseLog } from "@/hooks/useWorkoutLogging"
+import { capitalizeFirst } from "@/lib/string-helper"
 import SessionDetailsModal from "@/screens/home/session-details-modal"
-import { Dumbbell } from "lucide-react"
+import { Dumbbell, Eye } from "lucide-react"
 import { useState } from "react"
 
 type LogsCardProps = {
@@ -16,7 +17,7 @@ const LogsCard = ({ workout, handleLogExercise }: LogsCardProps) => {
 
     return (
         <>
-            <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-md border-slate-200 dark:border-slate-700 shadow-sm transition hover:shadow-lg">
+            <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-md border-slate-200 dark:border-slate-700 shadow-sm transition hover:shadow-lg gap-1">
                 <CardHeader className="pb-2">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -25,10 +26,10 @@ const LogsCard = ({ workout, handleLogExercise }: LogsCardProps) => {
                             </div>
                             <div>
                                 <div className="text-xs text-slate-500 dark:text-slate-400">
-                                    {workout.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' })}
+                                    {workout.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                 </div>
                                 <CardTitle className="text-base font-semibold leading-tight">
-                                    {workout.exerciseName}
+                                    {capitalizeFirst(workout.exerciseName)}
                                 </CardTitle>
                             </div>
                         </div>
@@ -39,11 +40,7 @@ const LogsCard = ({ workout, handleLogExercise }: LogsCardProps) => {
                             onClick={() => setIsOpen(true)}
                             aria-label="View Details"
                         >
-                            {/* Eye icon (Lucide Eye) */}
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M1.5 12s3.5-7 10.5-7 10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z" />
-                                <circle cx="12" cy="12" r="3" />
-                            </svg>
+                            <Eye className="h-5 w-5 text-blue-500" />
                         </Button>
                     </div>
                 </CardHeader>

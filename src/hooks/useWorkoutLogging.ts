@@ -108,18 +108,21 @@ export const useGetLastWorkoutSetsByExerciseId = (exerciseId: string) => {
   };
 };
 
-export const useGetRecentWorkouts = () => {
+export const useGetRecentWorkouts = (params: { date?: Date }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [recentWorkouts, setRecentWorkouts] = useState<ExerciseLog[] | null>(
     null
   );
+  const [totalSessions, setTotalSessions] = useState<number>(0);
 
   const fetchRecentWorkouts = async () => {
-    const recentWorkouts = await db.getRecentWorkoutLogs();
-    if (!recentWorkouts) return null;
+    const response = await db.getRecentWorkoutLogs(params);
+    if (!response) return null;
+
+    const { recentWorkoutLogs, totalSessions } = response;
 
     const exercises = [];
-    for (const workout of recentWorkouts) {
+    for (const workout of recentWorkoutLogs) {
       for (const workoutExercise of workout.exercises) {
         const exercise = await exerciseService.getExerciseById(
           workoutExercise.exerciseId
@@ -164,6 +167,7 @@ export const useGetRecentWorkouts = () => {
       (a, b) => b.date.getTime() - a.date.getTime()
     );
     setRecentWorkouts(sortedGroupedExercisesArray);
+    setTotalSessions(totalSessions);
     setIsLoading(false);
   };
 
@@ -174,6 +178,7 @@ export const useGetRecentWorkouts = () => {
   return {
     recentWorkouts,
     isLoading,
+    totalSessions,
   };
 };
 
