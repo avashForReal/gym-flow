@@ -9,7 +9,7 @@ import { Calendar, Dumbbell } from 'lucide-react'
 import { Route } from '@/routes/plan-details/$planId'
 import { Loader } from '@/components/loader/loader'
 import PlanDetailsHeader from './plan-details-header'
-import PlanDetailsExerciseCard from './plan-details-exercise-card'
+import SinglExerciseCard from '../plans-wizard/steps/SinglExerciseCard'
 
 export default function PlanDetails() {
     const navigate = useNavigate()
@@ -131,10 +131,14 @@ export default function PlanDetails() {
                         ) : (
                             <div className="space-y-3">
                                 {exercises.map((exercise) => (
-                                    <PlanDetailsExerciseCard
-                                        key={exercise.exerciseId}
+                                    <SinglExerciseCard
                                         exercise={exercise}
+                                        key={exercise.exerciseId}
+                                        onAddToDay={() => { }}
+                                        onRemoveFromDay={() => { }}
                                         onAddToLog={handleAddToLog}
+                                        isSelected={false}
+                                        isLog={true}
                                     />
                                 ))}
                             </div>

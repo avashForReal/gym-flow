@@ -1,7 +1,8 @@
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useGetRecentWorkouts } from "@/hooks/useWorkoutLogging";
 import { capitalizeFirst } from "@/lib/string-helper";
-import { Clock, History } from "lucide-react"
+import { Clock, Eye, History } from "lucide-react"
 
 const RecentActivity = () => {
     const { recentWorkouts, isLoading } = useGetRecentWorkouts();
@@ -56,17 +57,18 @@ const RecentActivity = () => {
                                 />
                             </div>
                         )}
-                        <div className="flex-1 flex flex-col justify-center">
-                            <div className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
+                        <div className="flex-1 flex justify-between mr-2">
+                            <div className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate max-w-[160px] overflow-hidden whitespace-nowrap">
                                 {capitalizeFirst(workout.exerciseName)}
                             </div>
                             <div className="flex items-center gap-1 mt-1 text-xs">
-                                <span className="px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 font-medium">
-                                    {workout.weight}kg
-                                </span>
-                                <span className="px-1.5 py-0.5 rounded bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200 font-medium">
-                                    {workout.reps}x
-                                </span>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-7 px-2 py-1 dark:border-slate-700 flex items-center gap-1 hover:bg-slate-200/60 dark:hover:bg-slate-700/60 transition text-slate-700 dark:text-slate-200"
+                                >
+                                    <Eye className="h-4 w-4 text-slate-500 dark:text-slate-300" />
+                                </Button>
                             </div>
                         </div>
                     </div>

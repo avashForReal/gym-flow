@@ -84,7 +84,11 @@ export function WorkoutLog() {
     }
 
     const handleBack = () => {
-        navigate({ to: '/plan-details/$planId', params: { planId }, search: { dayIndex } })
+        if(planId && dayIndex){
+            navigate({ to: '/plan-details/$planId', params: { planId }, search: { dayIndex } })
+        } else {
+            navigate({ to: '/logs' })
+        }
     }
 
     if (!exercise) {

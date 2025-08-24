@@ -9,10 +9,26 @@ export interface WorkoutSetData {
   reps: number;
 }
 
-interface RecentWorkout extends WorkoutSetData {
+type ExerciseLog = {
+  exerciseId: string;
   exerciseName: string;
   exerciseImage: string;
-}
+  sessionId: number;
+};
+
+type SetEntry = {
+  weight: number;
+  reps: number;
+};
+
+type Session = {
+  date: Date;
+  sessionId: number;
+  exerciseId: string;
+  exerciseName: string;
+  exerciseImage: string;
+  sets: SetEntry[];
+};
 
 export const useWorkoutLogs = () => {
   const [isSaving, setIsSaving] = useState(false);
@@ -69,7 +85,9 @@ export const useWorkoutLogs = () => {
 
 export const useGetLastWorkoutSetsByExerciseId = (exerciseId: string) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [workoutSetData, setWorkoutSetData] = useState<WorkoutSet[] | null>(null);
+  const [workoutSetData, setWorkoutSetData] = useState<WorkoutSet[] | null>(
+    null
+  );
 
   const fetchLastWorkoutData = async () => {
     const lastWorkoutSets = await db.getLastWorkoutSet(exerciseId);
@@ -91,25 +109,60 @@ export const useGetLastWorkoutSetsByExerciseId = (exerciseId: string) => {
 
 export const useGetRecentWorkouts = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [recentWorkouts, setRecentWorkouts] = useState<RecentWorkout[] | null>(null);
+  const [recentWorkouts, setRecentWorkouts] = useState<ExerciseLog[] | null>(
+    null
+  );
 
   const fetchRecentWorkouts = async () => {
     const recentWorkouts = await db.getRecentWorkoutLogs();
-    if(!recentWorkouts) return null;
+    if (!recentWorkouts) return null;
 
     const exercises = [];
-    for(const workout of recentWorkouts) {
-      const exercise = await exerciseService.getExerciseById(workout.exerciseId);
-      exercises.push({
-        exerciseId: workout.exerciseId,
-        exerciseName: exercise?.name!,
-        exerciseImage: exercise?.gifUrl!,
-        weight: workout.weight,
-        reps: workout.reps,
-      });
+    for (const workout of recentWorkouts) {
+      for (const workoutExercise of workout.exercises) {
+        const exercise = await exerciseService.getExerciseById(
+          workoutExercise.exerciseId
+        );
+        exercises.push({
+          exerciseId: workoutExercise.exerciseId,
+          exerciseName: exercise?.name!,
+          exerciseImage: exercise?.gifUrl!,
+          weight: workoutExercise.weight,
+          reps: workoutExercise.reps,
+          sessionId: workout.id!,
+          date: workout.date,
+        });
+      }
     }
 
-    setRecentWorkouts(exercises);
+    const groupedExercises = exercises.reduce<Record<number, Session>>(
+      (
+        acc,
+        { sessionId, exerciseId, exerciseName, exerciseImage, weight, reps, date }
+      ) => {
+        if (!acc[sessionId]) {
+          acc[sessionId] = {
+            sessionId,
+            exerciseId,
+            exerciseName,
+            exerciseImage,
+            date,
+            sets: [],
+          };
+        }
+
+        acc[sessionId].sets.push({ weight, reps });
+
+        return acc;
+      },
+      {}
+    );
+
+    const groupedExercisesArray = Object.values(groupedExercises);
+    const sortedGroupedExercisesArray = groupedExercisesArray.sort(
+      (a, b) => b.date.getTime() - a.date.getTime()
+    );
+    setRecentWorkouts(sortedGroupedExercisesArray);
     setIsLoading(false);
   };
 

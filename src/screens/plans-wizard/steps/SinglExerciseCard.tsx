@@ -4,23 +4,27 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import type { Exercise } from "@/data/types";
 import { capitalizeFirst } from "@/lib/string-helper";
-import { Eye, X } from "lucide-react";
+import { Eye, Plus, X } from "lucide-react";
 import { useState } from "react";
 
 type SinglExerciseCardProps = {
     exercise: Exercise;
     onAddToDay: () => void;
     onRemoveFromDay: () => void;
+    onAddToLog?: (exerciseId: string) => void;
     isSelected: boolean
     isDayList?: boolean
+    isLog?: boolean
 }
 
 const SinglExerciseCard = ({
     exercise,
     onAddToDay,
     onRemoveFromDay,
+    onAddToLog,
     isSelected,
-    isDayList = false
+    isDayList = false,
+    isLog = false
 }: SinglExerciseCardProps) => {
     const [showDetailsModal, setShowDetailsModal] = useState(false);
 
@@ -176,6 +180,19 @@ const SinglExerciseCard = ({
                                 >
                                     <Eye className="!h-4 !w-4" />
                                 </Button>
+                                {
+                                    isLog && (
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => onAddToLog?.(exercise.exerciseId)}
+                                            className="text-blue-700 hover:text-gray-600 hover:bg-gray-100 rounded"
+                                            title="View Details"
+                                        >
+                                            <Plus className="!h-4 !w-4" />
+                                        </Button>
+                                    )
+                                }
                             </div>
                         </div>
                     </div>
