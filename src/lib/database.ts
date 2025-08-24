@@ -475,7 +475,7 @@ export class GymFlowDatabase extends Dexie {
     return await this.workoutSets
       .where("sessionId")
       .equals(sessionId)
-      .toArray();
+      .sortBy("id");
   }
 }
 

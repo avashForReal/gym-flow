@@ -9,11 +9,12 @@ export interface WorkoutSetData {
   reps: number;
 }
 
-type ExerciseLog = {
+export type ExerciseLog = {
   exerciseId: string;
   exerciseName: string;
   exerciseImage: string;
   sessionId: number;
+  date: Date;
 };
 
 type SetEntry = {
@@ -175,3 +176,37 @@ export const useGetRecentWorkouts = () => {
     isLoading,
   };
 };
+
+export const useGetSessionDetails = (sessionId: number) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [sessionDetails, setSessionDetails] = useState<{
+    exerciseName: string;
+    createdAt: Date;
+    sets: WorkoutSet[];
+  }>({
+    exerciseName: "",
+    createdAt: new Date(),
+    sets: [],
+  });
+
+  const fetchSessionDetails = async () => {
+    const sessionDetails = await db.getWorkoutSetsBySession(sessionId);
+    const exercise = await exerciseService.getExerciseById(sessionDetails[0].exerciseId);
+   
+    setSessionDetails({
+      exerciseName: exercise?.name!,
+      createdAt: sessionDetails[0].createdAt,
+      sets: sessionDetails,
+    });
+    setIsLoading(false);
+  }
+
+  useEffect(() => {
+    fetchSessionDetails();
+  }, [sessionId]);
+
+  return {
+    sessionDetails,
+    isLoading,
+  };
+}

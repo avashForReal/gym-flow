@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { useGetRecentWorkouts } from "@/hooks/useWorkoutLogging"
 import { useNavigate } from "@tanstack/react-router"
-import { Activity, Dumbbell, Plus } from "lucide-react"
+import { Activity, Plus } from "lucide-react"
 import LogsHeader from "./logs-header/logs-header"
 import { useState } from "react"
 import ExerciseDrawer from "./exercise-drawer/exercise-drawer"
+import LogsCard from "./logs-card/logs-card"
 
 const Logs = () => {
   const navigate = useNavigate()
@@ -48,38 +49,7 @@ const Logs = () => {
           <div className="space-y-4">
             {recentWorkouts && recentWorkouts.length > 0 ? (
               recentWorkouts.map((workout, index) => (
-                <Card key={index} className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border-slate-200 dark:border-slate-700">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                          <Dumbbell className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                        </div>
-                        <div>
-                          <CardTitle>{workout.exerciseName}</CardTitle>
-                          {/* <CardDescription>
-                              {workout.weight} lbs × {workout.reps} reps
-                            </CardDescription> */}
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        {/* <p className="text-sm font-medium">{workout.weight * workout.reps} lbs</p> */}
-                        <p className="text-xs text-slate-600 dark:text-slate-400">volume</p>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center gap-4">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleLogExercise(workout.exerciseId)}
-                      >
-                        Log Again
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                <LogsCard key={index} workout={workout} handleLogExercise={handleLogExercise} />
               ))
             ) : (
               <Card className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border-slate-200 dark:border-slate-700">
@@ -87,9 +57,9 @@ const Logs = () => {
                   <Activity className="h-12 w-12 text-slate-400 mx-auto mb-4" />
                   <h3 className="font-medium mb-2">No Workout Logs</h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                    Start your first workout to see your logs here
+                    Log your first exercise to see your logs here!
                   </p>
-                  <Button>
+                  <Button onClick={() => setIsExerciseDrawerOpen(true)}>
                     <Plus className="h-4 w-4 mr-2" />
                     Start Your First Workout
                   </Button>
