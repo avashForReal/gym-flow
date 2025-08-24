@@ -60,11 +60,31 @@ export interface WorkoutPlanExercise {
   updatedAt: Date;
 }
 
+export interface WorkoutSession {
+  id?: number;
+  date: Date;
+  notes?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface WorkoutSet {
+  id?: number;
+  sessionId: number;
+  exerciseId: string;
+  weight: number;
+  reps: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export class GymFlowDatabase extends Dexie {
   users!: EntityTable<UserProfile, "id">;
   workoutPlans!: EntityTable<WorkoutPlan, "id">;
   workoutPlanDays!: EntityTable<WorkoutPlanDay, "id">;
   workoutPlanExercises!: EntityTable<WorkoutPlanExercise, "id">;
+  workoutSessions!: EntityTable<WorkoutSession, "id">;
+  workoutSets!: EntityTable<WorkoutSet, "id">;
 
   constructor() {
     super("GymFlowDB");
@@ -75,6 +95,8 @@ export class GymFlowDatabase extends Dexie {
       workoutPlanDays: "++id, planId, dayIndex, createdAt, updatedAt",
       workoutPlanExercises:
         "++id, planId, dayId, exerciseId, createdAt, updatedAt",
+      workoutSessions: "++id, date, createdAt, updatedAt",
+      workoutSets: "++id, sessionId, exerciseId, createdAt, updatedAt",
     });
 
     this.users.hook("creating", function (_primKey, obj, _trans) {
@@ -327,6 +349,118 @@ export class GymFlowDatabase extends Dexie {
     }
 
     await this.workoutPlans.update(planId, { isActive });
+  }
+
+  // Workout Logging Methods
+  async createWorkoutSession(sessionData: {
+    notes?: string;
+  }): Promise<number> {
+    const now = new Date();
+    
+    const sessionId = await this.workoutSessions.add({
+      date: now,
+      notes: sessionData.notes,
+      createdAt: now,
+      updatedAt: now,
+    } as WorkoutSession);
+
+    if (typeof sessionId === 'undefined') {
+      throw new Error('Failed to create workout session');
+    }
+
+    return sessionId as number;
+  }
+
+  async saveWorkoutSets(sessionId: number, sets: Array<{
+    exerciseId: string;
+    weight: number;
+    reps: number;
+  }>): Promise<void> {
+    const now = new Date();
+    
+    for (const set of sets) {
+      await this.workoutSets.add({
+        sessionId,
+        exerciseId: set.exerciseId,
+        weight: set.weight,
+        reps: set.reps,
+        createdAt: now,
+        updatedAt: now,
+      } as WorkoutSet);
+    }
+  }
+
+  async updateWorkoutSet(setId: number, updates: {
+    weight?: number;
+    reps?: number;
+  }): Promise<void> {
+    const now = new Date();
+    
+    await this.workoutSets.update(setId, {
+      ...updates,
+      updatedAt: now,
+    });
+  }
+
+  async deleteWorkoutSet(setId: number): Promise<void> {
+    await this.workoutSets.delete(setId);
+  }
+
+  async getWorkoutSetById(setId: number): Promise<WorkoutSet | undefined> {
+    return await this.workoutSets.get(setId);
+  }
+
+  async updateWorkoutSession(sessionId: number, updates: {
+    notes?: string;
+  }): Promise<void> {
+    const now = new Date();
+    
+    await this.workoutSessions.update(sessionId, {
+      ...updates,
+      updatedAt: now,
+    });
+  }
+
+  async getWorkoutHistory(exerciseId: string, limit: number = 10): Promise<WorkoutSet[]> {
+    return await this.workoutSets
+      .where('exerciseId')
+      .equals(exerciseId)
+      .reverse()
+      .sortBy('createdAt')
+      .then(sets => sets.slice(0, limit));
+  }
+
+  async getLastWorkoutSet(exerciseId: string): Promise<WorkoutSet[] | null> {
+    const sets = await this.workoutSets
+      .where('exerciseId')
+      .equals(exerciseId)
+      .reverse()
+      .sortBy('createdAt');
+
+    if (!sets || sets.length === 0) return null;
+
+    const lastSessionId = sets[0].sessionId;
+    if (lastSessionId === undefined || lastSessionId === null) return null;
+
+    const lastSessionSets = sets.filter(set => set.sessionId === lastSessionId);
+    const lastSessionSetSorted = lastSessionSets.sort((a, b) => a.id! - b.id!);
+
+    return lastSessionSetSorted.length > 0 ? lastSessionSetSorted : null;
+  }
+
+  async getWorkoutSessionsByDateRange(startDate: Date, endDate: Date): Promise<WorkoutSession[]> {
+    return await this.workoutSessions
+      .where('date')
+      .between(startDate, endDate)
+      .reverse()
+      .sortBy('date');
+  }
+
+  async getWorkoutSetsBySession(sessionId: number): Promise<WorkoutSet[]> {
+    return await this.workoutSets
+      .where('sessionId')
+      .equals(sessionId)
+      .toArray();
   }
 }
 

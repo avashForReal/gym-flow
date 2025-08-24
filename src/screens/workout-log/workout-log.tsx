@@ -6,6 +6,9 @@ import { Plus, Save } from 'lucide-react'
 import { Route } from '@/routes/add-log/$exerciseId'
 import { useSingleExerciseById } from '@/hooks/useExercises'
 import WorkoutLogHeader from './workout-log-header'
+import { useWorkoutLogs } from '@/hooks/useWorkoutLogging'
+import { capitalizeFirst } from '@/lib/string-helper'
+import WorkoutLogHistory from './workout-log-history'
 
 export function WorkoutLog() {
     const navigate = useNavigate()
@@ -13,31 +16,71 @@ export function WorkoutLog() {
     const { planId, dayIndex } = Route.useSearch() as { planId: string, dayIndex: number }
 
     const { exercise } = useSingleExerciseById(exerciseId)
+    const { saveWorkout, isSaving } = useWorkoutLogs()
 
-    const [sets, setSets] = useState<Array<{ weight: string; reps: string; rpe?: string }>>([
+    const [sets, setSets] = useState<Array<{ weight: string; reps: string }>>([
         { weight: '', reps: '' }
     ])
+    const [validationErrors, setValidationErrors] = useState<string[]>([])
+
+
+    const validateSets = (): boolean => {
+        const errors: string[] = []
+        sets.forEach((set, index) => {
+            if (!set.weight.trim()) {
+                errors.push(`Set ${index + 1}: Weight is required`)
+            } else if (isNaN(parseFloat(set.weight)) || parseFloat(set.weight) <= 0) {
+                errors.push(`Set ${index + 1}: Weight must be a positive number`)
+            }
+
+            if (!set.reps.trim()) {
+                errors.push(`Set ${index + 1}: Reps are required`)
+            } else if (isNaN(parseInt(set.reps)) || parseInt(set.reps) <= 0) {
+                errors.push(`Set ${index + 1}: Reps must be a positive number`)
+            }
+        })
+
+        setValidationErrors(errors)
+        return errors.length === 0
+    }
 
     const handleAddSet = () => {
         setSets([...sets, { weight: '', reps: '' }])
+        setValidationErrors([]) 
     }
 
-    const handleUpdateSet = (index: number, field: 'weight' | 'reps' | 'rpe', value: string) => {
+    const handleUpdateSet = (index: number, field: 'weight' | 'reps', value: string) => {
         const newSets = [...sets]
         newSets[index] = { ...newSets[index], [field]: value }
         setSets(newSets)
+        setValidationErrors([]) 
     }
 
     const handleRemoveSet = (index: number) => {
         if (sets.length > 1) {
             setSets(sets.filter((_, i) => i !== index))
+            setValidationErrors([])
         }
     }
 
-    const handleSaveWorkout = () => {
-        // TODO: Save workout data to database
-        console.log('Saving workout:', { exerciseId, sets })
-        // navigate({ to: '/plans' })
+    const handleSaveWorkout = async () => {
+        try {
+            setValidationErrors([])
+            if (!validateSets()) {
+                return
+            }
+            const workoutSets = sets.map(set => ({
+                exerciseId,
+                weight: parseFloat(set.weight),
+                reps: parseInt(set.reps),
+            }))
+            await saveWorkout(workoutSets)
+            alert('Workout saved successfully!')
+            navigate({ to: '/plan-details/$planId', params: { planId }, search: { dayIndex } })
+        } catch (error) {
+            console.error('Error saving workout:', error)
+            alert('Failed to save workout. Please try again.')
+        }
     }
 
     const handleBack = () => {
@@ -63,12 +106,33 @@ export function WorkoutLog() {
             <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-border/50">
                 <WorkoutLogHeader
                     handleBack={handleBack}
-                    exerciseName={exercise.name}
                 />
             </div>
 
+            <h2 className="px-4 pt-2 block text-base font-semibold text-slate-900 dark:text-white tracking-tight mb-1 truncate">
+                {capitalizeFirst(exercise.name)}
+            </h2>
+
             {/* Content */}
-            <div className="p-4 space-y-4">
+            <div className="px-4 pb-4 space-y-4">
+                <WorkoutLogHistory exerciseId={exerciseId} />
+
+                {validationErrors.length > 0 && (
+                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+                        <div className="text-red-600 dark:text-red-400 text-sm font-medium mb-2">
+                            Please fix the following errors:
+                        </div>
+                        <ul className="text-sm text-red-600 dark:text-red-400 space-y-1">
+                            {validationErrors.map((error, index) => (
+                                <li key={index} className="flex items-start gap-2">
+                                    <span className="text-red-500">•</span>
+                                    <span>{error}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+
                 <div className="space-y-3">
                     <div className="flex items-center gap-2 justify-between">
                         <span className="font-semibold text-base text-slate-900 dark:text-white">Sets</span>
@@ -140,9 +204,10 @@ export function WorkoutLog() {
                 <Button
                     className="w-full h-12 rounded-lg"
                     onClick={handleSaveWorkout}
+                    disabled={isSaving}
                 >
                     <Save className="h-4 w-4 mr-2" />
-                    Save Workout
+                    {isSaving ? 'Saving...' : 'Save Workout'}
                 </Button>
             </div>
         </div>
