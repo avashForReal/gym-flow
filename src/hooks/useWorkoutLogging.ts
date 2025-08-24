@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { db } from "@/lib/database";
 import type { WorkoutSet } from "@/lib/database";
 import { exerciseService } from "@/lib/exercise-service";
@@ -108,77 +108,138 @@ export const useGetLastWorkoutSetsByExerciseId = (exerciseId: string) => {
   };
 };
 
-export const useGetRecentWorkouts = (params: { date?: Date }) => {
+export const useGetRecentWorkouts = (params: { 
+  date?: Date;
+  limit?: number;
+  initialLimit?: number;
+}) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [recentWorkouts, setRecentWorkouts] = useState<ExerciseLog[] | null>(
     null
   );
   const [totalSessions, setTotalSessions] = useState<number>(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [lastCursor, setLastCursor] = useState<number | null>(null);
 
-  const fetchRecentWorkouts = async () => {
-    const response = await db.getRecentWorkoutLogs(params);
-    if (!response) return null;
+  const initialLimit = params.initialLimit ?? 10;
+  const loadMoreLimit = params.limit ?? 10;
 
-    const { recentWorkoutLogs, totalSessions } = response;
+  const fetchRecentWorkouts = useCallback(async (isLoadMore = false, cursor?: number) => {
+    try {
+      if (isLoadMore) {
+        setIsLoadingMore(true);
+      } else {
+        setIsLoading(true);
+      }
 
-    const exercises = [];
-    for (const workout of recentWorkoutLogs) {
-      for (const workoutExercise of workout.exercises) {
-        const exercise = await exerciseService.getExerciseById(
-          workoutExercise.exerciseId
-        );
-        exercises.push({
-          exerciseId: workoutExercise.exerciseId,
-          exerciseName: exercise?.name!,
-          exerciseImage: exercise?.gifUrl!,
-          weight: workoutExercise.weight,
-          reps: workoutExercise.reps,
-          sessionId: workout.id!,
-          date: workout.date,
-        });
+      const response = await db.getRecentWorkoutLogs({
+        limit: isLoadMore ? loadMoreLimit : initialLimit,
+        date: params.date,
+        cursor: cursor || undefined,
+      });
+
+
+      if (!response) {
+        if (isLoadMore) {
+          setIsLoadingMore(false);
+        } else {
+          setIsLoading(false);
+        }
+        setRecentWorkouts(null);
+        return;
+      }
+
+      const { recentWorkoutLogs, totalSessions, hasMore: moreAvailable } = response;
+
+      const exercises = [];
+      for (const workout of recentWorkoutLogs) {
+        for (const workoutExercise of workout.exercises) {
+          const exercise = await exerciseService.getExerciseById(
+            workoutExercise.exerciseId
+          );
+          exercises.push({
+            exerciseId: workoutExercise.exerciseId,
+            exerciseName: exercise?.name!,
+            exerciseImage: exercise?.gifUrl!,
+            weight: workoutExercise.weight,
+            reps: workoutExercise.reps,
+            sessionId: workout.id!,
+            date: workout.date,
+          });
+        }
+      }
+
+      const groupedExercises = exercises.reduce<Record<number, Session>>(
+        (
+          acc,
+          { sessionId, exerciseId, exerciseName, exerciseImage, weight, reps, date }
+        ) => {
+          if (!acc[sessionId]) {
+            acc[sessionId] = {
+              sessionId,
+              exerciseId,
+              exerciseName,
+              exerciseImage,
+              date,
+              sets: [],
+            };
+          }
+
+          acc[sessionId].sets.push({ weight, reps });
+
+          return acc;
+        },
+        {}
+      );
+
+      const groupedExercisesArray = Object.values(groupedExercises);
+      const sortedGroupedExercisesArray = groupedExercisesArray.sort(
+        (a, b) => b.date.getTime() - a.date.getTime()
+      );
+
+      if (isLoadMore) {
+        setRecentWorkouts(prev => prev ? [...prev, ...sortedGroupedExercisesArray] : sortedGroupedExercisesArray);
+      } else {
+        setRecentWorkouts(sortedGroupedExercisesArray);
+      }
+
+      setTotalSessions(totalSessions);
+      setHasMore(moreAvailable);
+      
+      // Set cursor for next page
+      if (recentWorkoutLogs.length > 0) {
+        const lastSession = recentWorkoutLogs[recentWorkoutLogs.length - 1];
+        setLastCursor(lastSession.id || null);
+      }
+    } catch (error) {
+      console.error('Error fetching recent workouts:', error);
+    } finally {
+      if (isLoadMore) {
+        setIsLoadingMore(false);
+      } else {
+        setIsLoading(false);
       }
     }
+  }, [params.date, params.limit, initialLimit, loadMoreLimit]);
 
-    const groupedExercises = exercises.reduce<Record<number, Session>>(
-      (
-        acc,
-        { sessionId, exerciseId, exerciseName, exerciseImage, weight, reps, date }
-      ) => {
-        if (!acc[sessionId]) {
-          acc[sessionId] = {
-            sessionId,
-            exerciseId,
-            exerciseName,
-            exerciseImage,
-            date,
-            sets: [],
-          };
-        }
-
-        acc[sessionId].sets.push({ weight, reps });
-
-        return acc;
-      },
-      {}
-    );
-
-    const groupedExercisesArray = Object.values(groupedExercises);
-    const sortedGroupedExercisesArray = groupedExercisesArray.sort(
-      (a, b) => b.date.getTime() - a.date.getTime()
-    );
-    setRecentWorkouts(sortedGroupedExercisesArray);
-    setTotalSessions(totalSessions);
-    setIsLoading(false);
-  };
+  const loadMore = useCallback(async () => {
+    if (!hasMore || isLoadingMore || !lastCursor) return;
+    await fetchRecentWorkouts(true, lastCursor);
+  }, [hasMore, isLoadingMore, lastCursor, fetchRecentWorkouts]);
 
   useEffect(() => {
     fetchRecentWorkouts();
-  }, []);
+  }, [fetchRecentWorkouts]);
 
   return {
     recentWorkouts,
     isLoading,
+    isLoadingMore,
+    hasMore,
     totalSessions,
+    loadMore,
+    refetch: () => fetchRecentWorkouts(),
   };
 };
 

@@ -433,32 +433,79 @@ export class GymFlowDatabase extends Dexie {
     return lastSessionSetSorted.length > 0 ? lastSessionSetSorted : null;
   }
 
-  async getRecentWorkoutLogs(params: { limit?: number; date?: Date }): Promise<{
+  async getRecentWorkoutLogs(params: {
+    limit?: number;
+    date?: Date;
+    cursor?: number;
+  }): Promise<{
     recentWorkoutLogs: Array<WorkoutSession & { exercises: WorkoutSet[] }>;
     totalSessions: number;
+    hasMore: boolean;
   } | null> {
     const queryLimit = params?.limit ?? 5;
 
-    const sets = await this.workoutSessions
+    const totalSessionsCount = await this.workoutSessions.count();
+    if (totalSessionsCount === 0) {
+      return null;
+    }
+
+    let query = this.workoutSessions
       .orderBy("createdAt")
       .reverse()
-      .filter((session) =>
-        params?.date
-          ? session.date?.toISOString() === params?.date.toISOString()
-          : true
-      )
-      .limit(queryLimit)
-      .toArray();
+      .filter((session) => {
+        if (!params?.date) return true;
+        
+        // Ensure we're comparing dates properly
+        let sessionDate: Date;
+        let filterDate: Date;
+        
+        try {
+          sessionDate = session.date instanceof Date ? session.date : new Date(session.date);
+          filterDate = params.date instanceof Date ? params.date : new Date(params.date);
+          
+          // Validate dates
+          if (isNaN(sessionDate.getTime()) || isNaN(filterDate.getTime())) {
+            console.warn('Invalid date detected:', { sessionDate: session.date, filterDate: params.date });
+            return false;
+          }
+        } catch (error) {
+          console.warn('Error parsing dates:', error);
+          return false;
+        }
+        
+
+        
+        // Compare only the date part (year, month, day) ignoring time
+        const dateMatches = sessionDate.getFullYear() === filterDate.getFullYear() &&
+                           sessionDate.getMonth() === filterDate.getMonth() &&
+                           sessionDate.getDate() === filterDate.getDate();
+        
+        // Also try string comparison as fallback
+        const stringMatches = sessionDate.toDateString() === filterDate.toDateString();
+        
+        return dateMatches || stringMatches;
+      });
+
+    // Apply cursor-based pagination
+    if (params?.cursor) {
+      query = query.filter((session) => (session.id || 0) < params.cursor!);
+    }
+
+    const sets = await query.limit(queryLimit + 1).toArray(); // +1 to check if there are more items
 
     const totalSessions = await this.workoutSessions.count();
 
     if (!sets || sets.length === 0) return null;
 
+    // Check if there are more items
+    const hasMore = sets.length > queryLimit;
+    const sessionsToProcess = hasMore ? sets.slice(0, queryLimit) : sets;
+
     const recentWorkoutLogs: Array<
       WorkoutSession & { exercises: WorkoutSet[] }
     > = [];
 
-    for (const set of sets) {
+    for (const set of sessionsToProcess) {
       const exercises = await this.workoutSets
         .where("sessionId")
         .equals(set.id!)
@@ -469,7 +516,12 @@ export class GymFlowDatabase extends Dexie {
         exercises,
       });
     }
-    return { recentWorkoutLogs, totalSessions };
+
+    return {
+      recentWorkoutLogs,
+      totalSessions,
+      hasMore,
+    };
   }
 
   async getWorkoutSessionsByDateRange(
