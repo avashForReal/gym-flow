@@ -146,7 +146,14 @@ export class GymFlowDatabase extends Dexie {
   }
 
   async clearAllData(): Promise<void> {
-    await Promise.all([this.users.clear()]);
+    await Promise.all([
+      this.users.clear(),
+      this.workoutPlans.clear(),
+      this.workoutPlanDays.clear(),
+      this.workoutPlanExercises.clear(),
+      this.workoutSessions.clear(),
+      this.workoutSets.clear(),
+    ]);
   }
 
   async exportData(): Promise<object> {

@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as PlansRouteImport } from './routes/plans'
 import { Route as LogsRouteImport } from './routes/logs'
 import { Route as AddPlanRouteImport } from './routes/add-plan'
@@ -17,6 +18,11 @@ import { Route as PlanDetailsPlanIdRouteImport } from './routes/plan-details/$pl
 import { Route as EditPlansPlanIdRouteImport } from './routes/edit-plans/$planId'
 import { Route as AddLogExerciseIdRouteImport } from './routes/add-log/$exerciseId'
 
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PlansRoute = PlansRouteImport.update({
   id: '/plans',
   path: '/plans',
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/add-plan': typeof AddPlanRoute
   '/logs': typeof LogsRoute
   '/plans': typeof PlansRoute
+  '/settings': typeof SettingsRoute
   '/add-log/$exerciseId': typeof AddLogExerciseIdRoute
   '/edit-plans/$planId': typeof EditPlansPlanIdRoute
   '/plan-details/$planId': typeof PlanDetailsPlanIdRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/add-plan': typeof AddPlanRoute
   '/logs': typeof LogsRoute
   '/plans': typeof PlansRoute
+  '/settings': typeof SettingsRoute
   '/add-log/$exerciseId': typeof AddLogExerciseIdRoute
   '/edit-plans/$planId': typeof EditPlansPlanIdRoute
   '/plan-details/$planId': typeof PlanDetailsPlanIdRoute
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/add-plan': typeof AddPlanRoute
   '/logs': typeof LogsRoute
   '/plans': typeof PlansRoute
+  '/settings': typeof SettingsRoute
   '/add-log/$exerciseId': typeof AddLogExerciseIdRoute
   '/edit-plans/$planId': typeof EditPlansPlanIdRoute
   '/plan-details/$planId': typeof PlanDetailsPlanIdRoute
@@ -88,6 +97,7 @@ export interface FileRouteTypes {
     | '/add-plan'
     | '/logs'
     | '/plans'
+    | '/settings'
     | '/add-log/$exerciseId'
     | '/edit-plans/$planId'
     | '/plan-details/$planId'
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/add-plan'
     | '/logs'
     | '/plans'
+    | '/settings'
     | '/add-log/$exerciseId'
     | '/edit-plans/$planId'
     | '/plan-details/$planId'
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/add-plan'
     | '/logs'
     | '/plans'
+    | '/settings'
     | '/add-log/$exerciseId'
     | '/edit-plans/$planId'
     | '/plan-details/$planId'
@@ -116,6 +128,7 @@ export interface RootRouteChildren {
   AddPlanRoute: typeof AddPlanRoute
   LogsRoute: typeof LogsRoute
   PlansRoute: typeof PlansRoute
+  SettingsRoute: typeof SettingsRoute
   AddLogExerciseIdRoute: typeof AddLogExerciseIdRoute
   EditPlansPlanIdRoute: typeof EditPlansPlanIdRoute
   PlanDetailsPlanIdRoute: typeof PlanDetailsPlanIdRoute
@@ -123,6 +136,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/plans': {
       id: '/plans'
       path: '/plans'
@@ -180,6 +200,7 @@ const rootRouteChildren: RootRouteChildren = {
   AddPlanRoute: AddPlanRoute,
   LogsRoute: LogsRoute,
   PlansRoute: PlansRoute,
+  SettingsRoute: SettingsRoute,
   AddLogExerciseIdRoute: AddLogExerciseIdRoute,
   EditPlansPlanIdRoute: EditPlansPlanIdRoute,
   PlanDetailsPlanIdRoute: PlanDetailsPlanIdRoute,
