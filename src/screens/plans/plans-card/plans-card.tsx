@@ -4,6 +4,7 @@ import { getActiveDaysCount, getTotalExercisesCount } from "@/hooks/usePlans"
 import type { WorkoutPlan } from "@/lib/database"
 import { Calendar, Edit, Trash2 } from "lucide-react"
 import { useNavigate } from "@tanstack/react-router"
+import { capitalizeFirst } from "@/lib/string-helper"
 
 type PlansCardProps = {
   plan: WorkoutPlan
@@ -50,7 +51,7 @@ const PlansCard = ({ plan, handleSetActivePlan, handleDeletePlan }: PlansCardPro
         <div className="flex items-start justify-between mb-3">
           <div className="flex-1 min-w-0">
             <h3 className="text-base font-bold text-slate-900 dark:text-white truncate">
-              {plan.name}
+              {capitalizeFirst(plan.name)}
             </h3>
             {plan.description && (
               <p className="text-xs text-muted-foreground mt-1 line-clamp-1">

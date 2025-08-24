@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
 import { db } from "@/lib/database";
 import type { WorkoutSet } from "@/lib/database";
+import { exerciseService } from "@/lib/exercise-service";
 
 export interface WorkoutSetData {
   exerciseId: string;
   weight: number;
   reps: number;
+}
+
+interface RecentWorkout extends WorkoutSetData {
+  exerciseName: string;
+  exerciseImage: string;
 }
 
 export const useWorkoutLogs = () => {
@@ -79,6 +85,40 @@ export const useGetLastWorkoutSetsByExerciseId = (exerciseId: string) => {
 
   return {
     workoutSetData,
+    isLoading,
+  };
+};
+
+export const useGetRecentWorkouts = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [recentWorkouts, setRecentWorkouts] = useState<RecentWorkout[] | null>(null);
+
+  const fetchRecentWorkouts = async () => {
+    const recentWorkouts = await db.getRecentWorkoutLogs();
+    if(!recentWorkouts) return null;
+
+    const exercises = [];
+    for(const workout of recentWorkouts) {
+      const exercise = await exerciseService.getExerciseById(workout.exerciseId);
+      exercises.push({
+        exerciseId: workout.exerciseId,
+        exerciseName: exercise?.name!,
+        exerciseImage: exercise?.gifUrl!,
+        weight: workout.weight,
+        reps: workout.reps,
+      });
+    }
+
+    setRecentWorkouts(exercises);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchRecentWorkouts();
+  }, []);
+
+  return {
+    recentWorkouts,
     isLoading,
   };
 };

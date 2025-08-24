@@ -406,30 +406,6 @@ export class GymFlowDatabase extends Dexie {
     await this.workoutSets.delete(setId);
   }
 
-  async getWorkoutSetById(setId: number): Promise<WorkoutSet | undefined> {
-    return await this.workoutSets.get(setId);
-  }
-
-  async updateWorkoutSession(sessionId: number, updates: {
-    notes?: string;
-  }): Promise<void> {
-    const now = new Date();
-    
-    await this.workoutSessions.update(sessionId, {
-      ...updates,
-      updatedAt: now,
-    });
-  }
-
-  async getWorkoutHistory(exerciseId: string, limit: number = 10): Promise<WorkoutSet[]> {
-    return await this.workoutSets
-      .where('exerciseId')
-      .equals(exerciseId)
-      .reverse()
-      .sortBy('createdAt')
-      .then(sets => sets.slice(0, limit));
-  }
-
   async getLastWorkoutSet(exerciseId: string): Promise<WorkoutSet[] | null> {
     const sets = await this.workoutSets
       .where('exerciseId')
@@ -446,6 +422,17 @@ export class GymFlowDatabase extends Dexie {
     const lastSessionSetSorted = lastSessionSets.sort((a, b) => a.id! - b.id!);
 
     return lastSessionSetSorted.length > 0 ? lastSessionSetSorted : null;
+  }
+
+  async getRecentWorkoutLogs(): Promise<WorkoutSet[] | null> {
+    const sets = await this.workoutSets
+      .reverse()
+      .limit(5)
+      .sortBy('createdAt');
+
+    if (!sets || sets.length === 0) return null;
+
+    return sets;
   }
 
   async getWorkoutSessionsByDateRange(startDate: Date, endDate: Date): Promise<WorkoutSession[]> {
