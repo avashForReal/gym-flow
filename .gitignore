@@ -17,3 +17,7 @@ dist-ssr
 memory_bank/
 memory-bank/
 dev-dist/
+tsconfig.node.tsbuildinfo
+tsconfig.tsbuildinfo
+vite.config.js
+vite.config.d.ts
