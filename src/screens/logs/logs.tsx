@@ -18,7 +18,8 @@ const Logs = () => {
     isLoading,
     isLoadingMore,
     hasMore,
-    loadMore
+    loadMore,
+    refetch
   } = useGetRecentWorkouts({
     initialLimit: 10,
     limit: 10,
@@ -90,7 +91,7 @@ const Logs = () => {
             {recentWorkouts && recentWorkouts.length > 0 ? (
               <>
                 {recentWorkouts.map((workout, index) => (
-                  <LogsCard key={index} workout={workout} handleLogExercise={handleLogExercise} />
+                  <LogsCard key={index} workout={workout} handleLogExercise={handleLogExercise} refetch={refetch} />
                 ))}
 
                 {/* Load More Button */}

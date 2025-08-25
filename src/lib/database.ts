@@ -548,6 +548,11 @@ export class GymFlowDatabase extends Dexie {
       .equals(sessionId)
       .sortBy("id");
   }
+
+  async deleteWorkoutSession(sessionId: number): Promise<void> {
+    await this.workoutSets.where("sessionId").equals(sessionId).delete();
+    await this.workoutSessions.delete(sessionId);
+  }
 }
 
 export const db = new GymFlowDatabase();

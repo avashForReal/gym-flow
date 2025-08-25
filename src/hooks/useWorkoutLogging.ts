@@ -276,3 +276,13 @@ export const useGetSessionDetails = (sessionId: number) => {
     isLoading,
   };
 }
+
+export const useDeleteWorkoutSession = (sessionId: number) => {
+  const deleteWorkoutSession = async () => {
+    await db.deleteWorkoutSession(sessionId);
+  }
+
+  return {
+    deleteWorkoutSession,
+  }
+}

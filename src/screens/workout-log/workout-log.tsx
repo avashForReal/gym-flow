@@ -29,13 +29,13 @@ export function WorkoutLog() {
         sets.forEach((set, index) => {
             if (!set.weight.trim()) {
                 errors.push(`Set ${index + 1}: Weight is required`)
-            } else if (isNaN(parseFloat(set.weight)) || parseFloat(set.weight) <= 0) {
+            } else if (isNaN(parseFloat(set.weight)) || parseFloat(set.weight) < 0) {
                 errors.push(`Set ${index + 1}: Weight must be a positive number`)
             }
 
             if (!set.reps.trim()) {
                 errors.push(`Set ${index + 1}: Reps are required`)
-            } else if (isNaN(parseInt(set.reps)) || parseInt(set.reps) <= 0) {
+            } else if (isNaN(parseInt(set.reps)) || parseInt(set.reps) < 0) {
                 errors.push(`Set ${index + 1}: Reps must be a positive number`)
             }
         })
@@ -46,14 +46,14 @@ export function WorkoutLog() {
 
     const handleAddSet = () => {
         setSets([...sets, { weight: '', reps: '' }])
-        setValidationErrors([]) 
+        setValidationErrors([])
     }
 
     const handleUpdateSet = (index: number, field: 'weight' | 'reps', value: string) => {
         const newSets = [...sets]
         newSets[index] = { ...newSets[index], [field]: value }
         setSets(newSets)
-        setValidationErrors([]) 
+        setValidationErrors([])
     }
 
     const handleRemoveSet = (index: number) => {
@@ -75,8 +75,12 @@ export function WorkoutLog() {
                 reps: parseInt(set.reps),
             }))
             await saveWorkout(workoutSets)
-            alert('Workout saved successfully!')
-            navigate({ to: '/plan-details/$planId', params: { planId }, search: { dayIndex } })
+            alert('Workout saved successfully!');
+            if (planId && dayIndex) {
+                navigate({ to: '/plan-details/$planId', params: { planId }, search: { dayIndex } })
+            } else {
+                navigate({ to: '/logs' })
+            }
         } catch (error) {
             console.error('Error saving workout:', error)
             alert('Failed to save workout. Please try again.')
@@ -84,7 +88,7 @@ export function WorkoutLog() {
     }
 
     const handleBack = () => {
-        if(planId && dayIndex){
+        if (planId && dayIndex) {
             navigate({ to: '/plan-details/$planId', params: { planId }, search: { dayIndex } })
         } else {
             navigate({ to: '/logs' })
@@ -174,7 +178,8 @@ export function WorkoutLog() {
                                             placeholder="Weight"
                                             value={set.weight}
                                             onChange={(e) => handleUpdateSet(index, 'weight', e.target.value)}
-                                            className="h-8 text-xs w-24 form-input"
+                                            className="h-8 w-24 form-input text-base"
+                                            inputMode="numeric"
                                         />
                                     </div>
                                     <div className="flex flex-col items-start">
@@ -184,7 +189,8 @@ export function WorkoutLog() {
                                             placeholder="Reps"
                                             value={set.reps}
                                             onChange={(e) => handleUpdateSet(index, 'reps', e.target.value)}
-                                            className="h-8 text-xs w-20 form-input"
+                                            className="h-8 w-20 form-input text-base"
+                                            inputMode="numeric"
                                         />
                                     </div>
                                 </div>

@@ -16,6 +16,7 @@ import { Route as AddPlanRouteImport } from './routes/add-plan'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PlanDetailsPlanIdRouteImport } from './routes/plan-details/$planId'
 import { Route as EditPlansPlanIdRouteImport } from './routes/edit-plans/$planId'
+import { Route as EditLogSessionIdRouteImport } from './routes/edit-log/$sessionId'
 import { Route as AddLogExerciseIdRouteImport } from './routes/add-log/$exerciseId'
 
 const SettingsRoute = SettingsRouteImport.update({
@@ -53,6 +54,11 @@ const EditPlansPlanIdRoute = EditPlansPlanIdRouteImport.update({
   path: '/edit-plans/$planId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EditLogSessionIdRoute = EditLogSessionIdRouteImport.update({
+  id: '/edit-log/$sessionId',
+  path: '/edit-log/$sessionId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AddLogExerciseIdRoute = AddLogExerciseIdRouteImport.update({
   id: '/add-log/$exerciseId',
   path: '/add-log/$exerciseId',
@@ -66,6 +72,7 @@ export interface FileRoutesByFullPath {
   '/plans': typeof PlansRoute
   '/settings': typeof SettingsRoute
   '/add-log/$exerciseId': typeof AddLogExerciseIdRoute
+  '/edit-log/$sessionId': typeof EditLogSessionIdRoute
   '/edit-plans/$planId': typeof EditPlansPlanIdRoute
   '/plan-details/$planId': typeof PlanDetailsPlanIdRoute
 }
@@ -76,6 +83,7 @@ export interface FileRoutesByTo {
   '/plans': typeof PlansRoute
   '/settings': typeof SettingsRoute
   '/add-log/$exerciseId': typeof AddLogExerciseIdRoute
+  '/edit-log/$sessionId': typeof EditLogSessionIdRoute
   '/edit-plans/$planId': typeof EditPlansPlanIdRoute
   '/plan-details/$planId': typeof PlanDetailsPlanIdRoute
 }
@@ -87,6 +95,7 @@ export interface FileRoutesById {
   '/plans': typeof PlansRoute
   '/settings': typeof SettingsRoute
   '/add-log/$exerciseId': typeof AddLogExerciseIdRoute
+  '/edit-log/$sessionId': typeof EditLogSessionIdRoute
   '/edit-plans/$planId': typeof EditPlansPlanIdRoute
   '/plan-details/$planId': typeof PlanDetailsPlanIdRoute
 }
@@ -99,6 +108,7 @@ export interface FileRouteTypes {
     | '/plans'
     | '/settings'
     | '/add-log/$exerciseId'
+    | '/edit-log/$sessionId'
     | '/edit-plans/$planId'
     | '/plan-details/$planId'
   fileRoutesByTo: FileRoutesByTo
@@ -109,6 +119,7 @@ export interface FileRouteTypes {
     | '/plans'
     | '/settings'
     | '/add-log/$exerciseId'
+    | '/edit-log/$sessionId'
     | '/edit-plans/$planId'
     | '/plan-details/$planId'
   id:
@@ -119,6 +130,7 @@ export interface FileRouteTypes {
     | '/plans'
     | '/settings'
     | '/add-log/$exerciseId'
+    | '/edit-log/$sessionId'
     | '/edit-plans/$planId'
     | '/plan-details/$planId'
   fileRoutesById: FileRoutesById
@@ -130,6 +142,7 @@ export interface RootRouteChildren {
   PlansRoute: typeof PlansRoute
   SettingsRoute: typeof SettingsRoute
   AddLogExerciseIdRoute: typeof AddLogExerciseIdRoute
+  EditLogSessionIdRoute: typeof EditLogSessionIdRoute
   EditPlansPlanIdRoute: typeof EditPlansPlanIdRoute
   PlanDetailsPlanIdRoute: typeof PlanDetailsPlanIdRoute
 }
@@ -185,6 +198,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EditPlansPlanIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/edit-log/$sessionId': {
+      id: '/edit-log/$sessionId'
+      path: '/edit-log/$sessionId'
+      fullPath: '/edit-log/$sessionId'
+      preLoaderRoute: typeof EditLogSessionIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/add-log/$exerciseId': {
       id: '/add-log/$exerciseId'
       path: '/add-log/$exerciseId'
@@ -202,6 +222,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlansRoute: PlansRoute,
   SettingsRoute: SettingsRoute,
   AddLogExerciseIdRoute: AddLogExerciseIdRoute,
+  EditLogSessionIdRoute: EditLogSessionIdRoute,
   EditPlansPlanIdRoute: EditPlansPlanIdRoute,
   PlanDetailsPlanIdRoute: PlanDetailsPlanIdRoute,
 }

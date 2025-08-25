@@ -1,19 +1,39 @@
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useGetSessionDetails, type ExerciseLog } from "@/hooks/useWorkoutLogging"
+import { useDeleteWorkoutSession, useGetSessionDetails, type ExerciseLog } from "@/hooks/useWorkoutLogging"
 import { capitalizeFirst } from "@/lib/string-helper"
 import SessionDetailsModal from "@/screens/home/session-details-modal"
-import { Dumbbell, Eye } from "lucide-react"
+import { useNavigate } from "@tanstack/react-router"
+import { Dumbbell, Eye, Pencil, Trash } from "lucide-react"
 import { useState } from "react"
 
 type LogsCardProps = {
     workout: ExerciseLog
     handleLogExercise: (exerciseId: string) => void
+    refetch: () => Promise<void>
 }
 
-const LogsCard = ({ workout, handleLogExercise }: LogsCardProps) => {
+const LogsCard = ({ workout, handleLogExercise, refetch }: LogsCardProps) => {
+    const navigate = useNavigate()
     const [isOpen, setIsOpen] = useState(false)
-    const { sessionDetails } = useGetSessionDetails(workout.sessionId)
+    const [deleteAlertOpen, setDeleteAlertOpen] = useState(false)
+    const { sessionDetails } = useGetSessionDetails(workout.sessionId);
+    const { deleteWorkoutSession } = useDeleteWorkoutSession(workout.sessionId);
+
+    const handleEditLog = () => {
+        navigate({ to: '/edit-log/$sessionId', params: { sessionId: workout.sessionId.toString() } })
+    }
+
+    const handleDeleteLog = () => {
+        setDeleteAlertOpen(true)
+    }
+
+    const handleConfirmDeleteLog = async() => {
+        deleteWorkoutSession()
+        await refetch()
+        setDeleteAlertOpen(false)
+    }
 
     return (
         <>
@@ -33,15 +53,35 @@ const LogsCard = ({ workout, handleLogExercise }: LogsCardProps) => {
                                 </CardTitle>
                             </div>
                         </div>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="hover:bg-blue-50 dark:hover:bg-blue-900/20 transition"
-                            onClick={() => setIsOpen(true)}
-                            aria-label="View Details"
-                        >
-                            <Eye className="h-5 w-5 text-blue-500" />
-                        </Button>
+                        <div className="flex flex-row gap-1">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="hover:bg-blue-50 dark:hover:bg-blue-900/20 transition"
+                                onClick={() => setIsOpen(true)}
+                                aria-label="View Details"
+                            >
+                                <Eye className="h-5 w-5 text-blue-500" />
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="hover:bg-blue-50 dark:hover:bg-blue-900/20 transition"
+                                onClick={handleEditLog}
+                                aria-label="Edit Log"
+                            >
+                                <Pencil className="h-5 w-5 text-blue-500" />
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="hover:bg-blue-50 dark:hover:bg-blue-900/20 transition"
+                                onClick={handleDeleteLog}
+                                aria-label="Delete Log"
+                            >
+                                <Trash className="h-5 w-5 text-red-600" />
+                            </Button>
+                        </div>
                     </div>
                 </CardHeader>
                 <CardContent className="pt-0">
@@ -57,6 +97,37 @@ const LogsCard = ({ workout, handleLogExercise }: LogsCardProps) => {
                     </div>
                 </CardContent>
             </Card>
+
+            <AlertDialog open={deleteAlertOpen} onOpenChange={setDeleteAlertOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Log?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Are you sure you want to delete this log? This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogAction asChild>
+                            <Button
+                                variant="destructive"
+                                className="bg-red-800 hover:bg-red-700"
+                                onClick={handleConfirmDeleteLog}
+                            >
+                                Confirm
+                            </Button>
+                        </AlertDialogAction>
+                        <AlertDialogCancel asChild>
+                            <Button
+                                variant="outline"
+                                onClick={() => setDeleteAlertOpen(false)}
+                            >
+                                Cancel
+                            </Button>
+                        </AlertDialogCancel>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
 
             <SessionDetailsModal
                 sessionDetails={sessionDetails}
