@@ -401,6 +401,30 @@ export class GymFlowDatabase extends Dexie {
     }
   }
 
+
+  async updateWorkoutSession(sessionId: number,  sets: Array<{
+    exerciseId: string;
+    weight: number;
+    reps: number;
+  }>): Promise<void> {
+    const now = new Date();
+
+    await this.workoutSets.where("sessionId").equals(sessionId).delete();
+
+    for (const set of sets) {
+      await this.workoutSets.add({
+        sessionId,
+        exerciseId: set.exerciseId,
+        weight: set.weight,
+        reps: set.reps,
+        createdAt: now,
+        updatedAt: now,
+      } as WorkoutSet);
+    }
+
+    await this.workoutSessions.update(sessionId, { updatedAt: now });
+  }
+
   async updateWorkoutSet(
     setId: number,
     updates: {

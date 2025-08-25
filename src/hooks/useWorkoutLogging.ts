@@ -52,35 +52,9 @@ export const useWorkoutLogs = () => {
     }
   };
 
-  const updateWorkoutSet = async (
-    setId: number,
-    updates: {
-      weight?: number;
-      reps?: number;
-    }
-  ): Promise<void> => {
-    try {
-      await db.updateWorkoutSet(setId, updates);
-    } catch (error) {
-      console.error("Error updating workout set:", error);
-      throw error;
-    }
-  };
-
-  const deleteWorkoutSet = async (setId: number): Promise<void> => {
-    try {
-      await db.deleteWorkoutSet(setId);
-    } catch (error) {
-      console.error("Error deleting workout set:", error);
-      throw error;
-    }
-  };
-
   return {
     isSaving,
     saveWorkout,
-    updateWorkoutSet,
-    deleteWorkoutSet,
   };
 };
 
@@ -247,10 +221,12 @@ export const useGetSessionDetails = (sessionId: number) => {
   const [isLoading, setIsLoading] = useState(true);
   const [sessionDetails, setSessionDetails] = useState<{
     exerciseName: string;
+    exerciseId: string;
     createdAt: Date;
     sets: WorkoutSet[];
   }>({
     exerciseName: "",
+    exerciseId: "",
     createdAt: new Date(),
     sets: [],
   });
@@ -261,6 +237,7 @@ export const useGetSessionDetails = (sessionId: number) => {
    
     setSessionDetails({
       exerciseName: exercise?.name!,
+      exerciseId: sessionDetails[0].exerciseId,
       createdAt: sessionDetails[0].createdAt,
       sets: sessionDetails,
     });
@@ -284,5 +261,15 @@ export const useDeleteWorkoutSession = (sessionId: number) => {
 
   return {
     deleteWorkoutSession,
+  }
+}
+
+export const useUpdateWorkoutSession = (sessionId: number) => {
+  const updateWorkoutSession = async (sets: WorkoutSetData[]) => {
+    await db.updateWorkoutSession(sessionId, sets);
+  }
+
+  return {
+    updateWorkoutSession,
   }
 }
