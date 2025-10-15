@@ -7,7 +7,7 @@ import {
   Play,
   ArrowRight
 } from "lucide-react"
-import HomeHeader from "@/screens/home/home-header/home-header"
+import HomeHeader from "@/screens/home/home-header/home-header.tsx"
 import { usePlans } from "@/hooks/usePlans"
 import { useNavigate } from "@tanstack/react-router"
 import { getGreeting, getTodaysFormattedDate } from "@/lib/date-helper"

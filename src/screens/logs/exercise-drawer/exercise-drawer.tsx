@@ -5,7 +5,7 @@ import { useExercises } from "@/hooks/useExercises";
 import { Dumbbell, Filter, Search, X } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { capitalizeFirst } from "@/lib/string-helper";
-import SinglExerciseCard from "@/screens/plans-wizard/steps/SinglExerciseCard";
+import SinglExerciseCard from "../../plans-wizard/steps/SinglExerciseCard";
 import { useNavigate } from "@tanstack/react-router";
 
 type ExerciseDrawerProps = {
